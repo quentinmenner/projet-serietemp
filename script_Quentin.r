@@ -54,11 +54,3 @@ pacf(desaison_ts)
 
 
 
-
-
-#axis(1,                                                   # Add dates to x-axis
-#     data$Periode,
-#     format(data$Periode, "%Y-%m-%d"))
-#     labels = c("Some text", "Other text"))
-
-
