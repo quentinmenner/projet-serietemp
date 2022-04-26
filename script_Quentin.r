@@ -12,6 +12,8 @@ library(urca)
 library(tidyverse)
 library(lubridate)
 library(xts)
+library(patchwork)
+
 
 # Importation et structuration des données ####
 datafile <- "projet-serietemp/valeurs_mensuelles_2.csv"
@@ -52,41 +54,135 @@ diff_ts = diff(ts_data, 1)
 plot(diff_ts)
 
 # ADF test
-fUnitRoots::adfTest(diff_ts)
-fUnitRoots::adfTest(desaison_ts, type = "c")
+test_adf = urca::ur.df(diff_ts)
+summary(test_adf)
+# On rejette l'hypothèse nulle
 
 # PP test
-tseries::pp.test(diff_ts) # test utilisé dans corrigé
-summary(urca::ur.pp(diff_ts, type="Z-tau"))
-summary(urca::ur.pp(diff_ts, type="Z-tau",model = "trend"))
+test_pp = tseries::pp.test(diff_ts) # test utilisé dans corrigé
+summary(test_pp)
+# On rejette l'hypothèse nulle
 
 # KPSS
-tseries::kpss.test(diff_ts)
+test_kpss = urca::ur.kpss(diff_ts)
+summary(test_kpss)
+# On ne rejette pas l'hypothèse nulle 
 
-# On rejette l'hypothèse de racine unitaire donc la série différencié est stationnaire
+# La série différenciée est donc stationnaire.
 
 # Représentation de la série avant / après 
-library(patchwork)
+plot(diff_ts)
 
 # Partie 2 ####
 
 # Question 4 : Estimation un ARMA(p,q)
-acf(desaison_ts)
-# valeur max p est de 2
+acf(diff_ts)
+# valeur max p est de 2 (pour le MA)
 
-pacf(desaison_ts)
-# valeur max q est de 3
+pacf(diff_ts)
+# valeur max q est de 3 (pour le AR) en regardant assez largement
 
 # Testons cette hypothèses
-model_maxi <- arima(desaison_ts, order = c(2,0,3))
+model_maxi <- arima(diff_ts, order = c(2,0,1))
 residus_maxi <- residuals(model_maxi)
 # Parait bon :
 ggAcf(residus_maxi) + ggPacf(residus_maxi)
 
 portes::LjungBox(model_maxi, order = 6)
+# Le modèle maximal parait passer le test d'autocorrélation des résidus.
 
+#Test des valeurs possibles de p et de q : test de tous les modèles
 
+lmtest::coeftest(model_maxi) # aucun coefficient n'est significatif
+
+evaluation_model <- function(order, x = diff_ts, lags = 24,...){
+  model <- forecast::Arima(x, order = order,...)
+  residus <- residuals(model)
+  # Test d'autocorrélation des résidus
+  lbtest <- t(sapply(1:lags,function(l){
+    if(l <=  length(coef(model))){
+      b <- list(statistic = NA, p.value = NA)
+    }else{
+      b <- Box.test(residus,"Ljung-Box",lag = l,
+                    fitdf = length(coef(model))
+      )
+    }
+    data.frame(lag = l,
+               b$statistic,
+               b$p.value
+    )
+  }))
+  # on ajoute un tryCatch pour éviter les erreurs
+  ttest <- tryCatch(lmtest::coeftest(model), error = NULL)
+  qualite <- c(AIC(model), BIC(model), accuracy(model))
+  names(qualite) <- c("AIC", "BIC", colnames(accuracy(model)))
+  list(model = model,
+       ttest = ttest,
+       lbtest = lbtest,
+       qualite = qualite)
+  
+}
+
+models_possibles <- expand.grid(p = c(0, 1, 2), d = 0, q = c(0, 1, 2, 3))
+
+models_evalues <- apply(models_possibles,1, evaluation_model)
+
+names(models_evalues) <- sprintf("ARIMA(%i,%i,%i)", models_possibles[,"p"],
+                                 models_possibles[,"d"], models_possibles[,"q"])
+
+cat(paste(sprintf("models_evalues$`%s`",names(models_evalues)),collapse = "\n"))
 # Partie 3 ####
 
+models_evalues$`ARIMA(0,0,0)`
+# Résidus non corrélés mais coefficient pas significatif
 
+models_evalues$`ARIMA(1,0,0)`
+# Résidus non corrélés globalement et coefficients significatif modèle retenu
 
+models_evalues$`ARIMA(2,0,0)`
+# Résidus non corrélés globalement mais coefficient ar2 pas significatif
+
+models_evalues$`ARIMA(0,0,1)`
+# Résidus non corrélés globalement et coefficients significatifs
+
+models_evalues$`ARIMA(1,0,1)`
+# Résidus non corrélés globalement mais coefficient ma1 pas significatif
+
+models_evalues$`ARIMA(2,0,1)`
+# Résidus non corrélés globalement et coefficients significatifs à 5% 
+
+models_evalues$`ARIMA(0,0,2)`
+# Résidus corrélés mais coefficients significatifs
+
+models_evalues$`ARIMA(1,0,2)`
+# Résidus non corrélés globalement mais coefficients pas significatifs
+
+models_evalues$`ARIMA(2,0,2)`
+# Très peu d'autocorrélation mais coefficients ar1 et ma1 non significatifs
+
+models_evalues$`ARIMA(0,0,3)`
+# Très peu d'autocorrélation mais coefficient ma3 non significatif
+
+models_evalues$`ARIMA(1,0,3)`
+# Coefficients pas significatifs
+
+models_evalues$`ARIMA(2,0,3)`
+# Très peu d'autocorrélation mais coefficient ar1 non significatif
+ 
+nom_modeles_retenus = c('ARIMA(1,0,0)', 'ARIMA(0,0,1)', 'ARIMA(2,0,1)')
+
+modeles_retenus <- models_evalues[nom_modeles_retenus]
+
+qualite_modeles_retenus <- sapply(modeles_retenus, function(x) x$qualite)
+
+round(qualite_modeles_retenus,4)
+
+apply(qualite_modeles_retenus,1,function(x) colnames(qualite_modeles_retenus)[which.min(x)])
+# Sur les critère d'informations un AR(1) semble le meilleur choix : ce résultat 
+# correspond aussi à l'hypothèse de départ étant l'ACF.
+
+# Question 5
+
+# Finalement on opte pour un ARIMA(1,1,0)
+model <- Arima(ts_data, order = c(1,1,0))
+model
