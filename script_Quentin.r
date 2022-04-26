@@ -130,9 +130,6 @@ models_evalues <- apply(models_possibles,1, evaluation_model)
 names(models_evalues) <- sprintf("ARIMA(%i,%i,%i)", models_possibles[,"p"],
                                  models_possibles[,"d"], models_possibles[,"q"])
 
-cat(paste(sprintf("models_evalues$`%s`",names(models_evalues)),collapse = "\n"))
-# Partie 3 ####
-
 models_evalues$`ARIMA(0,0,0)`
 # Résidus non corrélés mais coefficient pas significatif
 
@@ -186,3 +183,17 @@ apply(qualite_modeles_retenus,1,function(x) colnames(qualite_modeles_retenus)[wh
 # Finalement on opte pour un ARIMA(1,1,0)
 model <- Arima(ts_data, order = c(1,1,0))
 model
+checkresiduals(model)
+
+# Partie 3 : Prédiction####
+
+# Question 6 :..
+lapply(modeles_retenus,function(x) forecast(x$model, h = 4))
+
+# Question 7 : On suppose que les résidus suivent une loi normal centrée-réduite.
+
+# Question 8:
+autoplot(forecast(model))
+
+predict(model, 5)
+# Ce genre de modèle est difficile à prédire
