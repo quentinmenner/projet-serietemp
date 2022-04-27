@@ -33,7 +33,7 @@ Partie III : Prévision
 
 On note T la longueur de la série. On suppose que les résidus de la série sont gaussiens.
 
-6. Ecrire l’´equation vérifiée par la région de confiance de niveau α sur les valeurs futures (XT +1, XT +2).
+6. Ecrire l’équation vérifiée par la région de confiance de niveau α sur les valeurs futures (XT +1, XT +2).
 
 7. Préciser les hypothèses utilisées pour obtenir cette région.
 
