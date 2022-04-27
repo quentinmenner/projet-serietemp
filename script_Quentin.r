@@ -16,7 +16,7 @@ library(patchwork)
 
 
 # Importation et structuration des donnï¿½es ####
-datafile <- "projet-serietemp/valeurs_mensuelles_2.csv"
+datafile <- "valeurs_mensuelles_2.csv"
 data <- read.csv(datafile, sep = ";") %>% arrange(Periode)
 ts_data = ts(data$Valeur, start = c(1985,01), freq = 12)
 plot(ts_data, type = "l")
@@ -45,6 +45,7 @@ data_tendance = data %>%
   mutate(index = index(data))
 library("car")
 
+# Régression linéaire sur le temps
 scatterplot(Valeur ~ index, data = data_tendance, 
             smoother = FALSE, grid = FALSE, frame = FALSE)
 
@@ -83,7 +84,7 @@ pacf(diff_ts)
 # valeur max q est de 3 (pour le AR) en regardant assez largement
 
 # Testons cette hypothï¿½ses
-model_maxi <- arima(diff_ts, order = c(2,0,1))
+model_maxi <- arima(diff_ts, order = c(2,0,3))
 residus_maxi <- residuals(model_maxi)
 # Parait bon :
 ggAcf(residus_maxi) + ggPacf(residus_maxi)
@@ -93,7 +94,7 @@ portes::LjungBox(model_maxi, order = 6)
 
 #Test des valeurs possibles de p et de q : test de tous les modï¿½les
 
-lmtest::coeftest(model_maxi) # aucun coefficient n'est significatif
+lmtest::coeftest(model_maxi) # Coefficient ar1 non significatif --> pas forcèment utilisable
 
 evaluation_model <- function(order, x = diff_ts, lags = 24,...){
   model <- forecast::Arima(x, order = order,...)
@@ -197,4 +198,3 @@ autoplot(forecast(model, 2))
 
 predict(model, 2)
 # Ce genre de modï¿½le est difficile ï¿½ prï¿½dire
-
