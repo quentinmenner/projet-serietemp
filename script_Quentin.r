@@ -193,7 +193,8 @@ lapply(modeles_retenus,function(x) forecast(x$model, h = 4))
 # Question 7 : On suppose que les résidus suivent une loi normal centrée-réduite.
 
 # Question 8:
-autoplot(forecast(model))
+autoplot(forecast(model, 2))
 
-predict(model, 5)
+predict(model, 2)
 # Ce genre de modèle est difficile à prédire
+
