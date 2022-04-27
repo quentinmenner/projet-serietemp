@@ -1,7 +1,7 @@
-###### Projet de série temporelle ######
+###### Projet de sï¿½rie temporelle ######
 
-
-# Packages utilisés ####
+# Testlol
+# Packages utilisï¿½s ####
 
 library(zoo)
 library(tseries)
@@ -15,20 +15,20 @@ library(xts)
 library(patchwork)
 
 
-# Importation et structuration des données ####
+# Importation et structuration des donnï¿½es ####
 datafile <- "projet-serietemp/valeurs_mensuelles_2.csv"
 data <- read.csv(datafile, sep = ";") %>% arrange(Periode)
 ts_data = ts(data$Valeur, start = c(1985,01), freq = 12)
 plot(ts_data, type = "l")
-# On observe une tendance à la hausse
-# Données : 1985 - 2000
+# On observe une tendance ï¿½ la hausse
+# Donnï¿½es : 1985 - 2000
 
 # Partie 1 ####
 
-acf(ts_data) # Il semble que la série représente un AR pure
+acf(ts_data) # Il semble que la sï¿½rie reprï¿½sente un AR pure
 
 ## Question 1
-# Saisonnalité ? 
+# Saisonnalitï¿½ ? 
 decomposition_saison = data %>% 
   mutate(year = str_sub(Periode, end = 4)) %>% 
   mutate(month = str_sub(Periode, -2)) %>% 
@@ -36,9 +36,9 @@ decomposition_saison = data %>%
   summarise(moy_mens = mean(Valeur))
 
 plot(decomposition_saison$moy_mens)
-#On observe une très légère saisonnalité
+#On observe une trï¿½s lï¿½gï¿½re saisonnalitï¿½
 (max(decomposition_saison$moy_mens) - min(decomposition_saison$moy_mens))/min(decomposition_saison$moy_mens)
-# Les valeurs de décembre sont en moyenne 1,5% supérieur à celle de février...
+# Les valeurs de dï¿½cembre sont en moyenne 1,5% supï¿½rieur ï¿½ celle de fï¿½vrier...
 
 # Tendance ?
 data_tendance = data %>% 
@@ -48,7 +48,7 @@ library("car")
 scatterplot(Valeur ~ index, data = data_tendance, 
             smoother = FALSE, grid = FALSE, frame = FALSE)
 
-# Une tendance à la hausse semble se dégager
+# Une tendance ï¿½ la hausse semble se dï¿½gager
 diff_ts = diff(ts_data, 1)
 
 plot(diff_ts)
@@ -56,21 +56,21 @@ plot(diff_ts)
 # ADF test
 test_adf = urca::ur.df(diff_ts)
 summary(test_adf)
-# On rejette l'hypothèse nulle
+# On rejette l'hypothï¿½se nulle
 
 # PP test
-test_pp = tseries::pp.test(diff_ts) # test utilisé dans corrigé
+test_pp = tseries::pp.test(diff_ts) # test utilisï¿½ dans corrigï¿½
 summary(test_pp)
-# On rejette l'hypothèse nulle
+# On rejette l'hypothï¿½se nulle
 
 # KPSS
 test_kpss = urca::ur.kpss(diff_ts)
 summary(test_kpss)
-# On ne rejette pas l'hypothèse nulle 
+# On ne rejette pas l'hypothï¿½se nulle 
 
-# La série différenciée est donc stationnaire.
+# La sï¿½rie diffï¿½renciï¿½e est donc stationnaire.
 
-# Représentation de la série avant / après 
+# Reprï¿½sentation de la sï¿½rie avant / aprï¿½s 
 plot(diff_ts)
 
 # Partie 2 ####
@@ -82,23 +82,23 @@ acf(diff_ts)
 pacf(diff_ts)
 # valeur max q est de 3 (pour le AR) en regardant assez largement
 
-# Testons cette hypothèses
+# Testons cette hypothï¿½ses
 model_maxi <- arima(diff_ts, order = c(2,0,1))
 residus_maxi <- residuals(model_maxi)
 # Parait bon :
 ggAcf(residus_maxi) + ggPacf(residus_maxi)
 
 portes::LjungBox(model_maxi, order = 6)
-# Le modèle maximal parait passer le test d'autocorrélation des résidus.
+# Le modï¿½le maximal parait passer le test d'autocorrï¿½lation des rï¿½sidus.
 
-#Test des valeurs possibles de p et de q : test de tous les modèles
+#Test des valeurs possibles de p et de q : test de tous les modï¿½les
 
 lmtest::coeftest(model_maxi) # aucun coefficient n'est significatif
 
 evaluation_model <- function(order, x = diff_ts, lags = 24,...){
   model <- forecast::Arima(x, order = order,...)
   residus <- residuals(model)
-  # Test d'autocorrélation des résidus
+  # Test d'autocorrï¿½lation des rï¿½sidus
   lbtest <- t(sapply(1:lags,function(l){
     if(l <=  length(coef(model))){
       b <- list(statistic = NA, p.value = NA)
@@ -112,7 +112,7 @@ evaluation_model <- function(order, x = diff_ts, lags = 24,...){
                b$p.value
     )
   }))
-  # on ajoute un tryCatch pour éviter les erreurs
+  # on ajoute un tryCatch pour ï¿½viter les erreurs
   ttest <- tryCatch(lmtest::coeftest(model), error = NULL)
   qualite <- c(AIC(model), BIC(model), accuracy(model))
   names(qualite) <- c("AIC", "BIC", colnames(accuracy(model)))
@@ -131,40 +131,40 @@ names(models_evalues) <- sprintf("ARIMA(%i,%i,%i)", models_possibles[,"p"],
                                  models_possibles[,"d"], models_possibles[,"q"])
 
 models_evalues$`ARIMA(0,0,0)`
-# Résidus non corrélés mais coefficient pas significatif
+# Rï¿½sidus non corrï¿½lï¿½s mais coefficient pas significatif
 
 models_evalues$`ARIMA(1,0,0)`
-# Résidus non corrélés globalement et coefficients significatif modèle retenu
+# Rï¿½sidus non corrï¿½lï¿½s globalement et coefficients significatif modï¿½le retenu
 
 models_evalues$`ARIMA(2,0,0)`
-# Résidus non corrélés globalement mais coefficient ar2 pas significatif
+# Rï¿½sidus non corrï¿½lï¿½s globalement mais coefficient ar2 pas significatif
 
 models_evalues$`ARIMA(0,0,1)`
-# Résidus non corrélés globalement et coefficients significatifs
+# Rï¿½sidus non corrï¿½lï¿½s globalement et coefficients significatifs
 
 models_evalues$`ARIMA(1,0,1)`
-# Résidus non corrélés globalement mais coefficient ma1 pas significatif
+# Rï¿½sidus non corrï¿½lï¿½s globalement mais coefficient ma1 pas significatif
 
 models_evalues$`ARIMA(2,0,1)`
-# Résidus non corrélés globalement et coefficients significatifs à 5% 
+# Rï¿½sidus non corrï¿½lï¿½s globalement et coefficients significatifs ï¿½ 5% 
 
 models_evalues$`ARIMA(0,0,2)`
-# Résidus corrélés mais coefficients significatifs
+# Rï¿½sidus corrï¿½lï¿½s mais coefficients significatifs
 
 models_evalues$`ARIMA(1,0,2)`
-# Résidus non corrélés globalement mais coefficients pas significatifs
+# Rï¿½sidus non corrï¿½lï¿½s globalement mais coefficients pas significatifs
 
 models_evalues$`ARIMA(2,0,2)`
-# Très peu d'autocorrélation mais coefficients ar1 et ma1 non significatifs
+# Trï¿½s peu d'autocorrï¿½lation mais coefficients ar1 et ma1 non significatifs
 
 models_evalues$`ARIMA(0,0,3)`
-# Très peu d'autocorrélation mais coefficient ma3 non significatif
+# Trï¿½s peu d'autocorrï¿½lation mais coefficient ma3 non significatif
 
 models_evalues$`ARIMA(1,0,3)`
 # Coefficients pas significatifs
 
 models_evalues$`ARIMA(2,0,3)`
-# Très peu d'autocorrélation mais coefficient ar1 non significatif
+# Trï¿½s peu d'autocorrï¿½lation mais coefficient ar1 non significatif
  
 nom_modeles_retenus = c('ARIMA(1,0,0)', 'ARIMA(0,0,1)', 'ARIMA(2,0,1)')
 
@@ -175,8 +175,8 @@ qualite_modeles_retenus <- sapply(modeles_retenus, function(x) x$qualite)
 round(qualite_modeles_retenus,4)
 
 apply(qualite_modeles_retenus,1,function(x) colnames(qualite_modeles_retenus)[which.min(x)])
-# Sur les critère d'informations un AR(1) semble le meilleur choix : ce résultat 
-# correspond aussi à l'hypothèse de départ étant l'ACF.
+# Sur les critï¿½re d'informations un AR(1) semble le meilleur choix : ce rï¿½sultat 
+# correspond aussi ï¿½ l'hypothï¿½se de dï¿½part ï¿½tant l'ACF.
 
 # Question 5
 
@@ -185,15 +185,15 @@ model <- Arima(ts_data, order = c(1,1,0))
 model
 checkresiduals(model)
 
-# Partie 3 : Prédiction####
+# Partie 3 : Prï¿½diction####
 
 # Question 6 :..
 lapply(modeles_retenus,function(x) forecast(x$model, h = 4))
 
-# Question 7 : On suppose que les résidus suivent une loi normal centrée-réduite.
+# Question 7 : On suppose que les rï¿½sidus suivent une loi normal centrï¿½e-rï¿½duite.
 
 # Question 8:
 autoplot(forecast(model))
 
 predict(model, 5)
-# Ce genre de modèle est difficile à prédire
+# Ce genre de modï¿½le est difficile ï¿½ prï¿½dire
