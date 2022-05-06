@@ -14,12 +14,30 @@ library(lubridate)
 library(xts)
 library(patchwork)
 
+# Lieu exportation graphiques
+setwd(dir = "~/projet-serietemp")
+lien_graph = "projet-serietemp/Graphiques"
 
 # Importation et structuration des donn�es ####
 datafile <- "valeurs_mensuelles_2.csv"
-data <- read.csv(datafile, sep = ";") %>% arrange(Periode)
-ts_data = ts(data$Valeur, start = c(1985,01), freq = 12)
-plot(ts_data, type = "l")
+data <- read.csv(datafile, sep = ";") %>% 
+  arrange(Periode) %>% 
+  mutate(Periode = ym(Periode))
+ts_data <- ts(data$Valeur, start = c(1985,01), freq = 12)
+gg = ggplot(data = data, aes(x = Periode, y = Valeur))+
+  geom_line()+
+  scale_x_date(expand = c(0.01, 0.01)) +
+  ggtitle("Evolution du prix de ... entre janvier 1985 et janvier 2000")+
+  labs(caption = "Indice 100 en ...")+
+  ggthemes::theme_stata()+
+  theme(
+    plot.title   = element_text(lineheight = 0.8, face = "bold", hjust = 0.5, size = 15),
+    axis.text.x  = element_text(angle = 45, hjust = 1),
+    axis.text.y  = element_text(),
+    axis.title.x = element_blank(),
+    axis.title.y = element_blank())
+
+saveRDS(gg, file.path(lien_graph,"courbe.rds"))
 # On observe une tendance � la hausse
 # Donn�es : 1985 - 2000
 
@@ -29,7 +47,7 @@ acf(ts_data) # Il semble que la s�rie repr�sente un AR pure
 
 ## Question 1
 # Saisonnalit� ? 
-decomposition_saison = data %>% 
+decomposition_saison <- data %>% 
   mutate(year = str_sub(Periode, end = 4)) %>% 
   mutate(month = str_sub(Periode, -2)) %>% 
   group_by(month) %>% 
@@ -41,7 +59,7 @@ plot(decomposition_saison$moy_mens)
 # Les valeurs de d�cembre sont en moyenne 1,5% sup�rieur � celle de f�vrier...
 
 # Tendance ?
-data_tendance = data %>% 
+data_tendance <- data %>% 
   mutate(index = index(data))
 library("car")
 
