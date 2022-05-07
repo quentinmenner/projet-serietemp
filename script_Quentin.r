@@ -27,8 +27,9 @@ ts_data <- ts(data$Valeur, start = c(1985,01), freq = 12)
 gg = ggplot(data = data, aes(x = Periode, y = Valeur))+
   geom_line()+
   scale_x_date(expand = c(0.01, 0.01)) +
-  ggtitle("Evolution de l'indice du prix de ... entre janvier 1985 et janvier 2000")+
-  labs(caption = "Indice en base 100 en ...")+
+  ggtitle("Evolution de l'indice de la production mensuelle de biens manufacturés 
+          \nen France entre janvier 1985 et janvier 2000")+
+  labs(caption = "Indice en base 100 en 1990")+
   ggthemes::theme_stata()+
   theme(
     plot.title   = element_text(lineheight = 0.8, face = "bold", hjust = 0.5, size = 15),
