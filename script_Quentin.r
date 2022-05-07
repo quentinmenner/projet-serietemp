@@ -16,7 +16,7 @@ library(patchwork)
 
 # Lieu exportation graphiques
 setwd(dir = "~/projet-serietemp")
-lien_graph = "projet-serietemp/Graphiques"
+lien_graph = "Graphiques"
 
 # Importation et structuration des donn�es ####
 datafile <- "valeurs_mensuelles_2.csv"
@@ -27,8 +27,8 @@ ts_data <- ts(data$Valeur, start = c(1985,01), freq = 12)
 gg = ggplot(data = data, aes(x = Periode, y = Valeur))+
   geom_line()+
   scale_x_date(expand = c(0.01, 0.01)) +
-  ggtitle("Evolution du prix de ... entre janvier 1985 et janvier 2000")+
-  labs(caption = "Indice 100 en ...")+
+  ggtitle("Evolution de l'indice du prix de ... entre janvier 1985 et janvier 2000")+
+  labs(caption = "Indice en base 100 en ...")+
   ggthemes::theme_stata()+
   theme(
     plot.title   = element_text(lineheight = 0.8, face = "bold", hjust = 0.5, size = 15),
@@ -38,12 +38,25 @@ gg = ggplot(data = data, aes(x = Periode, y = Valeur))+
     axis.title.y = element_blank())
 
 saveRDS(gg, file.path(lien_graph,"courbe.rds"))
+
 # On observe une tendance � la hausse
 # Donn�es : 1985 - 2000
 
 # Partie 1 ####
 
-acf(ts_data) # Il semble que la s�rie repr�sente un AR pure
+gg2 = ggAcf(ts_data)+
+  labs(title = "ACF")+
+  ggthemes::theme_stata()+
+  theme(
+    plot.title   = element_text(lineheight = 0.8, face = "bold", hjust = 0.5, size = 15),
+    axis.text.x  = element_text(hjust = 1),
+    axis.text.y  = element_text(),
+    axis.title.x = element_text(),
+    axis.title.y = element_blank())
+ 
+saveRDS(gg2, file.path(lien_graph,"ACF_1.rds"))
+
+# Il semble que la s�rie repr�sente un AR pure
 
 ## Question 1
 # Saisonnalit� ? 
