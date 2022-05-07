@@ -52,19 +52,19 @@ Avec $(\epsilon_{t})_{t} \sim {\sf Norm}(0,1)$. Avec une probabilité de $\alpha
 q_{\frac{\alpha}{2}} + a + bY_{T} \leq &Y_{T+1} \leq q_{1-\frac{\alpha}{2}} + a + bY_{T} \\
 q_{\frac{\alpha}{2}} + a + b(X_{T}-X_{T-1}) + X_{T} \leq &X_{T+1} \leq q_{1-\frac{\alpha}{2}} + a + b(X_{T}-X_{T-1}) + X_{T} \\
 q_{\frac{\alpha}{2}} + a + (b+1)X_{T} - bX_{T-1} \leq &X_{T+1} \leq q_{1-\frac{\alpha}{2}} + a + (b+1)X_{T} - bX_{T-1} \\
-\text{Et } q_{\frac{\alpha}{2}} + a + bY_{T+1} \leq &Y_{T+2} \leq q_{1-\frac{\alpha}{2}} + a + bY_{T+1} \\
+\text{Et :          } q_{\frac{\alpha}{2}} + a + bY_{T+1} \leq &Y_{T+2} \leq q_{1-\frac{\alpha}{2}} + a + bY_{T+1} \\
 q_{\frac{\alpha}{2}} + a + (b+1)X_{T+1} - bX_{T} + \leq &X_{T+2} \leq q_{1-\frac{\alpha}{2}} + a + (b+1)X_{T+1} - bX_{T} \\
 q_{\frac{\alpha}{2}} + a + (b+1)(q_{\frac{\alpha}{2}} + a + (b+1)X_{T} - bX_{T-1}) - bX_{T} + \leq &X_{T+2} \leq q_{1-\frac{\alpha}{2}} + a + (b+1)(q_{1-\frac{\alpha}{2}} + a + (b+1)X_{T} - bX_{T-1}) - bX_{T} \\
 (b+2)q_{\frac{\alpha}{2}} + (b+2)a + (b^2 + b + 1)X_{T} - b(b+1)X_{T-1} \leq &X_{T+2} \leq (b+2)q_{1-\frac{\alpha}{2}} + (b+2)a + (b^2 + b + 1)X_{T} - b(b+1)X_{T-1} \\
 \end{align*}
 
-D'après la partie II, $a = .. et b = ...$. Donc on a :
+D'après la partie II, $a = .. et b = ...$. Donc on a comme région de confiance de niveau $\alpha$:
 
 $X_{T+1} \in \left[q_{\frac{\alpha}{2}} + a + (b+1)X_{T} - bX_{T-1}, q_{1-\frac{\alpha}{2}} + a + (b+1)X_{T} - bX_{T-1}\right]$
 
 $X_{T+2} \in \left[..q_{\frac{\alpha}{2}} + .. + ..X_{T} - ..X_{T-1}, ..q_{1-\frac{\alpha}{2}} + .. + ..X_{T} - ..X_{T-1}\right]$
 
-7.
+7. Pour obtenir cette région de confiance, nous utilisons les hypothèses que les résidus suivent une loi normale centrée réduite, que la série temporelle est considérée comme stationnaire une fois la différenciation effectuée et qu'elle peut être modélisée par un modèle ARIMA de paramètres (1,1,0)
 
 8.
 
