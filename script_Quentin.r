@@ -13,6 +13,7 @@ library(tidyverse)
 library(lubridate)
 library(xts)
 library(patchwork)
+library(tsbox)
 
 # Lieu exportation graphiques
 setwd(dir = "~/projet-serietemp")
@@ -63,14 +64,23 @@ saveRDS(gg2, file.path(lien_graph,"ACF_1.rds"))
 # Saisonnalitï¿½ ? 
 decomposition_saison <- data %>% 
   mutate(year = year(Periode)) %>% 
-  mutate(month = month(Periode)) %>% 
-  group_by(month) %>% 
-  summarise(moy_mens = mean(Valeur))
+  mutate(month = month(Periode, label = TRUE, abbr = FALSE,locale = "French")) %>% 
+  select(month, Valeur)
 
-gg3 = ggplot(decomposition_saison)
+gg3 = ggplot(decomposition_saison, aes(group = month, x = month, y =Valeur)) +
+  geom_boxplot()+
+  ggthemes::theme_stata()+
+  theme(
+    plot.title   = element_text(lineheight = 0.8, face = "bold", hjust = 0.5, size = 15),
+    axis.text.x  = element_text(angle = 45,hjust = 1),
+    axis.text.y  = element_text(),
+    axis.title.x = element_blank(),
+    axis.title.y = element_blank())
+gg3  
 #On observe une trï¿½s lï¿½gï¿½re saisonnalitï¿½
-(max(decomposition_saison$moy_mens) - min(decomposition_saison$moy_mens))/min(decomposition_saison$moy_mens)
-# Les valeurs de dï¿½cembre sont en moyenne 1,5% supï¿½rieur ï¿½ celle de fï¿½vrier...
+
+ts_data2 = diff(ts_data, 12)
+
 
 # Tendance ?
 data_tendance <- data %>% 
@@ -84,8 +94,6 @@ scatterplot(Valeur ~ index, data = data_tendance,
 # Une tendance ï¿½ la hausse semble se dï¿½gager
 diff_ts = diff(ts_data, 1)
 
-plot(diff_ts)
-
 # ADF test
 test_adf = urca::ur.df(diff_ts)
 summary(test_adf)
@@ -93,7 +101,7 @@ summary(test_adf)
 
 # PP test
 test_pp = tseries::pp.test(diff_ts) # test utilisï¿½ dans corrigï¿½
-summary(test_pp)
+test_pp
 # On rejette l'hypothï¿½se nulle
 
 # KPSS
@@ -104,22 +112,41 @@ summary(test_kpss)
 # La sï¿½rie diffï¿½renciï¿½e est donc stationnaire.
 
 # Reprï¿½sentation de la sï¿½rie avant / aprï¿½s 
-plot(diff_ts)
+
+df_serie_choisi = data.frame(Periode = time(diff_ts),
+                             Valeur = as_tibble(diff_ts)$x)
+df_serie_choisi$Periode
+
+
+graph_serie_choisi = ggplot(df_serie_choisi, aes(x = Periode, y = Valeur))+
+  geom_line()+
+  ggtitle("Série temporelle choisie (différenciation saisonnière et
+          \n différenciation première)") +
+  ggthemes::theme_stata()+
+  theme(
+    plot.title   = element_text(lineheight = 0.8, face = "bold", hjust = 0.5, size = 15),
+    axis.text.x  = element_text(angle = 45, hjust = 1),
+    axis.text.y  = element_text(),
+    axis.title.x = element_blank(),
+    axis.title.y = element_blank())
+
+saveRDS(graph_serie_choisi, file.path(lien_graph, "ts_choisie.rds"))
 
 # Partie 2 ####
 
 # Question 4 : Estimation un ARMA(p,q)
-acf(diff_ts)
-# valeur max p est de 2 (pour le MA)
+ggAcf(diff_ts)
+# valeur max p est de 1 (pour le MA)
 
-pacf(diff_ts)
+ggPacf(diff_ts)
 # valeur max q est de 3 (pour le AR) en regardant assez largement
 
 # Testons cette hypothï¿½ses
-model_maxi <- arima(diff_ts, order = c(2,0,3))
+model_maxi <- arima(diff_ts, order = c(1,0,3))
 residus_maxi <- residuals(model_maxi)
 # Parait bon :
 ggAcf(residus_maxi) + ggPacf(residus_maxi)
+# On observe un pique important pour un lag 12
 
 portes::LjungBox(model_maxi, order = 6)
 # Le modï¿½le maximal parait passer le test d'autocorrï¿½lation des rï¿½sidus.
