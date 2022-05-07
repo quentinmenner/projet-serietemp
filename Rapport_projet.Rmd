@@ -15,7 +15,45 @@ classoption: landscape
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+```{r}
+# Packages utilisés ####
+library(zoo)
+library(tseries)
+library(lmtest)
+library(forecast)
+library(ggplot2)
+library(urca)
+library(tidyverse)
+library(lubridate)
+library(xts)
+library(patchwork)
+
+# Chemin d'exportation graphiques
+#setwd(dir = "~/projet-serietemp")
+lien_graph = "projet-serietemp/Graphiques"
+
+# Importation et structuration des données ####
+datafile <- "valeurs_mensuelles_2.csv"
+data <- read.csv(datafile, sep = ";") %>% 
+  arrange(Periode) %>% 
+  mutate(Periode = ym(Periode))
+ts_data <- ts(data$Valeur, start = c(1985,01), freq = 12)
+gg = ggplot(data = data, aes(x = Periode, y = Valeur))+
+  geom_line()+
+  scale_x_date(expand = c(0.01, 0.01)) +
+  ggtitle("Evolution du prix de ... entre janvier 1985 et janvier 2000")+
+  labs(caption = "Indice 100 en ...")+
+  ggthemes::theme_stata()+
+  theme(
+    plot.title   = element_text(lineheight = 0.8, face = "bold", hjust = 0.5, size = 15),
+    axis.text.x  = element_text(angle = 45, hjust = 1),
+    axis.text.y  = element_text(),
+    axis.title.x = element_blank(),
+    axis.title.y = element_blank())
+
+saveRDS(gg, file.path(lien_graph,"courbe.rds"))
+```
+
 
 ## Partie I : Les données
 
@@ -33,6 +71,7 @@ summary(cars)
 ## Partie II : Modèles ARMA
 
 4.
+
 
 5.
 
@@ -64,7 +103,7 @@ $X_{T+1} \in \left[q_{\frac{\alpha}{2}} + a + (b+1)X_{T} - bX_{T-1}, q_{1-\frac{
 
 $X_{T+2} \in \left[..q_{\frac{\alpha}{2}} + .. + ..X_{T} - ..X_{T-1}, ..q_{1-\frac{\alpha}{2}} + .. + ..X_{T} - ..X_{T-1}\right]$
 
-7. Pour obtenir cette région de confiance, nous utilisons les hypothèses que les résidus suivent une loi normale centrée réduite, que la série temporelle est considérée comme stationnaire une fois la différenciation effectuée et qu'elle peut être modélisée par un modèle ARIMA de paramètres (1,1,0)
+7. Pour obtenir cette région de confiance, nous utilisons les hypothèses que les résidus suivent une loi normale centrée réduite, que la série temporelle est considérée comme stationnaire une fois la différenciation effectuée et qu'elle peut être modélisée par un modèle ARIMA de paramètres (1,1,0).
 
 8.
 
