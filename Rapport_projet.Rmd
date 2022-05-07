@@ -15,22 +15,39 @@ classoption: landscape
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+## Partie I : Les données
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+1. La série étudiée représente la production mensuelle de biens manufacturés en France métropolitaine entre janvier 1985 et janvier 2000. C'est une série agrégée corrigée des variations saisonnières et des jours ouvrés (CVS-CJO) contenant 181 observations. L'unité de mesure est un indice de base 100 en 1990.
+La série est de la forme suivante : 
+
+2.
+
+3.
 
 ```{r cars}
 summary(cars)
 ```
 
-## Including Plots
+## Partie II : Modèles ARMA
 
-You can also embed plots, for example:
+4.
+
+5.
 
 ```{r pressure, echo=FALSE}
 plot(pressure)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+## Partie III : Prévision
+
+6. Comme nous avons réalisé une différentiation d'un mois à l'autre dans la question 2, nous prenons ici le modèle de la forme ARIMA(1,1,0) :
+$Y_{t} = X_{t}-X_{t-1} = $
+$x = y$
+
+7.
+
+8.
+
+9.
