@@ -19,7 +19,7 @@ library(tsbox)
 setwd(dir = "~/projet-serietemp")
 lien_graph = "Graphiques"
 
-# Importation et structuration des donnï¿½es ####
+# Importation et structuration des donnÃ©es ####
 datafile <- "valeurs_mensuelles_2.csv"
 data <- read.csv(datafile, sep = ";") %>% 
   arrange(Periode) %>% 
@@ -28,7 +28,7 @@ ts_data <- ts(data$Valeur, start = c(1985,01), freq = 12)
 gg = ggplot(data = data, aes(x = Periode, y = Valeur))+
   geom_line()+
   scale_x_date(expand = c(0.01, 0.01)) +
-  ggtitle("Evolution de l'indice de la production mensuelle de biens manufacturés 
+  ggtitle("Evolution de l'indice de la production mensuelle de biens manufactur?s 
           \nen France entre janvier 1985 et janvier 2000")+
   labs(caption = "Indice en base 100 en 1990")+
   ggthemes::theme_stata()+
@@ -87,7 +87,7 @@ data_tendance <- data %>%
   mutate(index = index(data))
 library("car")
 
-# Régression linéaire sur le temps
+# R?gression lin?aire sur le temps
 scatterplot(Valeur ~ index, data = data_tendance, 
             smoother = FALSE, grid = FALSE, frame = FALSE)
 
@@ -120,8 +120,8 @@ df_serie_choisi$Periode
 
 graph_serie_choisi = ggplot(df_serie_choisi, aes(x = Periode, y = Valeur))+
   geom_line()+
-  ggtitle("Série temporelle choisie (différenciation saisonnière et
-          \n différenciation première)") +
+  ggtitle("S?rie temporelle choisie (diff?renciation saisonni?re et
+          \n diff?renciation premi?re)") +
   ggthemes::theme_stata()+
   theme(
     plot.title   = element_text(lineheight = 0.8, face = "bold", hjust = 0.5, size = 15),
@@ -153,7 +153,7 @@ portes::LjungBox(model_maxi, order = 6)
 
 #Test des valeurs possibles de p et de q : test de tous les modï¿½les
 
-lmtest::coeftest(model_maxi) # Coefficient ar1 non significatif --> pas forcèment utilisable
+lmtest::coeftest(model_maxi) # Coefficient ar1 non significatif --> pas forc?ment utilisable
 
 evaluation_model <- function(order, x = diff_ts, lags = 24,...){
   model <- forecast::Arima(x, order = order,...)
