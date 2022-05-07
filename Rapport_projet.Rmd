@@ -43,8 +43,26 @@ plot(pressure)
 ## Partie III : Prévision
 
 6. Comme nous avons réalisé une différentiation d'un mois à l'autre dans la question 2, nous prenons ici le modèle de la forme ARIMA(1,1,0) :
-$Y_{t} = X_{t}-X_{t-1} = $
-$x = y$
+\begin{center}
+$Y_{t} = X_{t}-X_{t-1} = a + bY_{t-1} + \epsilon_{t}$
+\end{center}
+Avec $(\epsilon_{t})_{t} \sim {\sf Norm}(0,1)$. Avec une probabilité de $\alpha\%$, $\mid\epsilon_{t}\mid \leq q_{1-\frac{\alpha}{2}}$. Ce qui donne :
+
+\begin{align*}
+q_{\frac{\alpha}{2}} + a + bY_{T} \leq &Y_{T+1} \leq q_{1-\frac{\alpha}{2}} + a + bY_{T} \\
+q_{\frac{\alpha}{2}} + a + b(X_{T}-X_{T-1}) + X_{T} \leq &X_{T+1} \leq q_{1-\frac{\alpha}{2}} + a + b(X_{T}-X_{T-1}) + X_{T} \\
+q_{\frac{\alpha}{2}} + a + (b+1)X_{T} - bX_{T-1} \leq &X_{T+1} \leq q_{1-\frac{\alpha}{2}} + a + (b+1)X_{T} - bX_{T-1} \\
+\text{Et } q_{\frac{\alpha}{2}} + a + bY_{T+1} \leq &Y_{T+2} \leq q_{1-\frac{\alpha}{2}} + a + bY_{T+1} \\
+q_{\frac{\alpha}{2}} + a + (b+1)X_{T+1} - bX_{T} + \leq &X_{T+2} \leq q_{1-\frac{\alpha}{2}} + a + (b+1)X_{T+1} - bX_{T} \\
+q_{\frac{\alpha}{2}} + a + (b+1)(q_{\frac{\alpha}{2}} + a + (b+1)X_{T} - bX_{T-1}) - bX_{T} + \leq &X_{T+2} \leq q_{1-\frac{\alpha}{2}} + a + (b+1)(q_{1-\frac{\alpha}{2}} + a + (b+1)X_{T} - bX_{T-1}) - bX_{T} \\
+(b+2)q_{\frac{\alpha}{2}} + (b+2)a + (b^2 + b + 1)X_{T} - b(b+1)X_{T-1} \leq &X_{T+2} \leq (b+2)q_{1-\frac{\alpha}{2}} + (b+2)a + (b^2 + b + 1)X_{T} - b(b+1)X_{T-1} \\
+\end{align*}
+
+D'après la partie II, $a = .. et b = ...$. Donc on a :
+
+$X_{T+1} \in \left[q_{\frac{\alpha}{2}} + a + (b+1)X_{T} - bX_{T-1}, q_{1-\frac{\alpha}{2}} + a + (b+1)X_{T} - bX_{T-1}\right]$
+
+$X_{T+2} \in \left[..q_{\frac{\alpha}{2}} + .. + ..X_{T} - ..X_{T-1}, ..q_{1-\frac{\alpha}{2}} + .. + ..X_{T} - ..X_{T-1}\right]$
 
 7.
 
