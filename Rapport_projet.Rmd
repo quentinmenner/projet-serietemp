@@ -18,15 +18,46 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ##  Partie I : Les données
 
-
+1. La série étudiée représente la production mensuelle de biens manufacturés en France métropolitaine entre janvier 1985 et janvier 2000. C'est une série agrégée corrigée des variations saisonnières et des jours ouvrés (CVS-CJO) contenant 181 observations. L'unité de mesure est un indice de base 100 en 1990.
+La série est de la forme suivante :
 
 
 ```{r, include=TRUE, echo=FALSE}
-lien_graph = "projet-serietemp/Graphiques"
+lien_graph = "Graphiques"
+gg = readRDS(file.path(lien_graph,"courbe.rds"))
+plot(gg)
 
 ```
 
 ## Partie II : Modèles ARMA
 
+4.
+
+5.
+
 ## Partie III : Prévision
 
+6. Comme nous avons réalisé une différentiation d'un mois à l'autre dans la question 2, nous prenons ici le modèle de la forme ARIMA(1,1,0) :
+\begin{center}
+$Y_{t} = X_{t}-X_{t-1} = a + bY_{t-1} + \epsilon_{t}$
+\end{center}
+Avec $(\epsilon_{t})_{t} \sim {\sf Norm}(0,1)$. Avec une probabilité de $\alpha\%$, $\mid\epsilon_{t}\mid \leq q_{1-\frac{\alpha}{2}}$. Ce qui donne :
+
+\begin{align*}
+q_{\frac{\alpha}{2}} + a + bY_{T} \leq &Y_{T+1} \leq q_{1-\frac{\alpha}{2}} + a + bY_{T} \\
+q_{\frac{\alpha}{2}} + a + b(X_{T}-X_{T-1}) + X_{T} \leq &X_{T+1} \leq q_{1-\frac{\alpha}{2}} + a + b(X_{T}-X_{T-1}) + X_{T} \\
+q_{\frac{\alpha}{2}} + a + (b+1)X_{T} - bX_{T-1} \leq &X_{T+1} \leq q_{1-\frac{\alpha}{2}} + a + (b+1)X_{T} - bX_{T-1} \\
+
+\text{Et :          } q_{\frac{\alpha}{2}} + a + bY_{T+1} \leq &Y_{T+2} \leq q_{1-\frac{\alpha}{2}} + a + bY_{T+1} \\
+q_{\frac{\alpha}{2}} + a + (b+1)X_{T+1} - bX_{T} + \leq &X_{T+2} \leq q_{1-\frac{\alpha}{2}} + a + (b+1)X_{T+1} - bX_{T} \\
+q_{\frac{\alpha}{2}} + a + (b+1)(q_{\frac{\alpha}{2}} + a + (b+1)X_{T} - bX_{T-1}) - bX_{T} + \leq &X_{T+2} \leq q_{1-\frac{\alpha}{2}} + a + (b+1)(q_{1-\frac{\alpha}{2}} + a + (b+1)X_{T} - bX_{T-1}) - bX_{T} \\
+(b+2)q_{\frac{\alpha}{2}} + (b+2)a + (b^2 + b + 1)X_{T} - b(b+1)X_{T-1} \leq &X_{T+2} \leq (b+2)q_{1-\frac{\alpha}{2}} + (b+2)a + (b^2 + b + 1)X_{T} - b(b+1)X_{T-1} \\
+\end{align*}
+
++D'après la partie II, $a = .. et b = ...$. Donc on a comme région de confiance de niveau $\alpha$:
+
+$X_{T+1} \in \left[q_{\frac{\alpha}{2}} + a + (b+1)X_{T} - bX_{T-1}, q_{1-\frac{\alpha}{2}} + a + (b+1)X_{T} - bX_{T-1}\right]$
+
+$X_{T+2} \in \left[..q_{\frac{\alpha}{2}} + .. + ..X_{T} - ..X_{T-1}, ..q_{1-\frac{\alpha}{2}} + .. + ..X_{T} - ..X_{T-1}\right]$
+
+7. Pour obtenir cette région de confiance, nous utilisons les hypothèses que les résidus suivent une loi normale centrée réduite, que la série temporelle est considérée comme stationnaire une fois la différenciation effectuée et qu'elle peut être modélisée par un modèle ARIMA de paramètres (1,1,0)

@@ -61,12 +61,12 @@ saveRDS(gg2, file.path(lien_graph,"ACF_1.rds"))
 ## Question 1
 # Saisonnalit� ? 
 decomposition_saison <- data %>% 
-  mutate(year = str_sub(Periode, end = 4)) %>% 
-  mutate(month = str_sub(Periode, -2)) %>% 
+  mutate(year = year(Periode)) %>% 
+  mutate(month = month(Periode)) %>% 
   group_by(month) %>% 
   summarise(moy_mens = mean(Valeur))
 
-plot(decomposition_saison$moy_mens)
+gg3 = ggplot(decomposition_saison)
 #On observe une tr�s l�g�re saisonnalit�
 (max(decomposition_saison$moy_mens) - min(decomposition_saison$moy_mens))/min(decomposition_saison$moy_mens)
 # Les valeurs de d�cembre sont en moyenne 1,5% sup�rieur � celle de f�vrier...
