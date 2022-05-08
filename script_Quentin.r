@@ -1,7 +1,7 @@
-###### Projet de s�rie temporelle ######
+###### Projet de série temporelle ######
 
-# Testlol
-# Packages utilis�s ####
+
+# Packages utilisés ####
 
 library(zoo)
 library(tseries)
@@ -13,55 +13,29 @@ library(tidyverse)
 library(lubridate)
 library(xts)
 library(patchwork)
-library(tsbox)
 
 # Lieu exportation graphiques
 setwd(dir = "~/projet-serietemp")
 lien_graph = "Graphiques"
 
 # Importation et structuration des données ####
+
+# en object data.frame
 datafile <- "valeurs_mensuelles_2.csv"
 data <- read.csv(datafile, sep = ";") %>% 
   arrange(Periode) %>% 
   mutate(Periode = ym(Periode))
+
+#Passage en en object ts
 ts_data <- ts(data$Valeur, start = c(1985,01), freq = 12)
-gg = ggplot(data = data, aes(x = Periode, y = Valeur))+
-  geom_line()+
-  scale_x_date(expand = c(0.01, 0.01)) +
-  ggtitle("Evolution de l'indice de la production mensuelle de biens manufactur?s 
-          \nen France entre janvier 1985 et janvier 2000")+
-  labs(caption = "Indice en base 100 en 1990")+
-  ggthemes::theme_stata()+
-  theme(
-    plot.title   = element_text(lineheight = 0.8, face = "bold", hjust = 0.5, size = 15),
-    axis.text.x  = element_text(angle = 45, hjust = 1),
-    axis.text.y  = element_text(),
-    axis.title.x = element_blank(),
-    axis.title.y = element_blank())
 
-saveRDS(gg, file.path(lien_graph,"courbe.rds"))
-
-# On observe une tendance � la hausse
-# Donn�es : 1985 - 2000
+# On observe une tendance à la hausse
 
 # Partie 1 ####
 
-gg2 = ggAcf(ts_data)+
-  labs(title = "ACF")+
-  ggthemes::theme_stata()+
-  theme(
-    plot.title   = element_text(lineheight = 0.8, face = "bold", hjust = 0.5, size = 15),
-    axis.text.x  = element_text(hjust = 1),
-    axis.text.y  = element_text(),
-    axis.title.x = element_text(),
-    axis.title.y = element_blank())
- 
-saveRDS(gg2, file.path(lien_graph,"ACF_1.rds"))
+## Question 2 ####
 
-# Il semble que la s�rie repr�sente un AR pure
-
-## Question 1
-# Saisonnalit� ? 
+# Y-a-t-il une saisonnalité ? 
 decomposition_saison <- data %>% 
   mutate(year = year(Periode)) %>% 
   mutate(month = month(Periode, label = TRUE, abbr = FALSE,locale = "French")) %>% 
@@ -77,51 +51,50 @@ gg3 = ggplot(decomposition_saison, aes(group = month, x = month, y =Valeur)) +
     axis.title.x = element_blank(),
     axis.title.y = element_blank())
 gg3  
-#On observe une tr�s l�g�re saisonnalit�
+# On observe une très légère saisonnalité mais rien de très marqué au point de réaliser 
+# une différenciation saisonnière
 
-ts_data2 = diff(ts_data, 12)
-
-
-# Tendance ?
+# Y-a-t-il une tendance ?
 data_tendance <- data %>% 
   mutate(index = index(data))
 library("car")
 
-# R?gression lin?aire sur le temps
+# Régression linéaire sur le temps
 scatterplot(Valeur ~ index, data = data_tendance, 
             smoother = FALSE, grid = FALSE, frame = FALSE)
 
-# Une tendance � la hausse semble se d�gager
+# Une tendance à la hausse semble se dégager
 diff_ts = diff(ts_data, 1)
 
 # ADF test
 test_adf = urca::ur.df(diff_ts)
 summary(test_adf)
-# On rejette l'hypoth�se nulle
+# On rejette l'hypothése nulle (la série n'est pas stationnaire)
 
 # PP test
-test_pp = tseries::pp.test(diff_ts) # test utilis� dans corrig�
+test_pp = tseries::pp.test(diff_ts) # test utilisé dans corrigé
 test_pp
-# On rejette l'hypoth�se nulle
+# On rejette l'hypothése nulle (la série n'est pas stationnaire)
 
 # KPSS
 test_kpss = urca::ur.kpss(diff_ts)
 summary(test_kpss)
-# On ne rejette pas l'hypoth�se nulle 
+# On ne rejette pas l'hypothése nulle 
 
-# La s�rie diff�renci�e est donc stationnaire.
-
-# Repr�sentation de la s�rie avant / apr�s 
-
-df_serie_choisi = data.frame(Periode = time(diff_ts),
-                             Valeur = as_tibble(diff_ts)$x)
-df_serie_choisi$Periode
+# La série différenciée est donc stationnaire.
 
 
-graph_serie_choisi = ggplot(df_serie_choisi, aes(x = Periode, y = Valeur))+
+## Quesion 3 ####
+
+#Représentation de la série avant :
+
+#Graphique de la série en niveau
+graph_niveau = ggplot(data = data, aes(x = Periode, y = Valeur))+
   geom_line()+
-  ggtitle("S?rie temporelle choisie (diff?renciation saisonni?re et
-          \n diff?renciation premi?re)") +
+  scale_x_date(expand = c(0.01, 0.01)) +
+  ggtitle("Evolution de l'indice de la production mensuelle de biens manufactur?s 
+          \nen France entre janvier 1985 et janvier 2000")+
+  labs(caption = "Indice en base 100 en 1990")+
   ggthemes::theme_stata()+
   theme(
     plot.title   = element_text(lineheight = 0.8, face = "bold", hjust = 0.5, size = 15),
@@ -130,7 +103,32 @@ graph_serie_choisi = ggplot(df_serie_choisi, aes(x = Periode, y = Valeur))+
     axis.title.x = element_blank(),
     axis.title.y = element_blank())
 
-saveRDS(graph_serie_choisi, file.path(lien_graph, "ts_choisie.rds"))
+# Sauvegarde du graphique
+saveRDS(graph_niveau, file.path(lien_graph,"courbe.rds"))
+
+# Réprésentation de la série après :
+
+# Passage en object data.frame
+df_serie_choisi = data.frame(Periode = time(diff_ts),
+                             Valeur = as_tibble(diff_ts)$x)
+
+# Construction du graphique
+graph_diff = ggplot(df_serie_choisi, aes(x = Periode, y = Valeur))+
+  geom_line()+
+  ggtitle("Représentation de la série temporelle choisie") +
+  ggthemes::theme_stata()+
+  theme(
+    plot.title   = element_text(lineheight = 0.8, face = "bold", hjust = 0.5, size = 15),
+    axis.text.x  = element_text(angle = 45, hjust = 1),
+    axis.text.y  = element_text(),
+    axis.title.x = element_blank(),
+    axis.title.y = element_blank())
+
+# Sauvegarde du graphique
+saveRDS(graph_diff, file.path(lien_graph, "ts_choisie.rds"))
+
+graph_niveau /
+  graph_niveau
 
 # Partie 2 ####
 

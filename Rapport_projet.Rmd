@@ -30,7 +30,7 @@ plot(gg)
 
 ```
 
-Une autre caractéristique importante de notre série temporelle est son autocorrélation des résidues. On observe en effet qu'ils sont parfaitement linéairement décroissants et en dehors des intervalles de confiance. Cela nous mène à penser que la série est une marche aléatoire.
+Une autre caractéristique importante de notre série temporelle est son autocorrélation des résidues. On observe en effet qu'ils sont parfaitement linéairement décroissants et en dehors des intervalles de confiance. Cela nous amène penser que la série est une marche aléatoire.
 
 ```{r, include=TRUE, echo=FALSE}
 
