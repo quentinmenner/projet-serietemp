@@ -19,9 +19,25 @@ library(patchwork)
 
 ##  Partie I : Les données
 
-1. La série étudiée représente la production mensuelle de biens manufacturés en France métropolitaine entre janvier 1985 et janvier 2000. C'est une série agrégée corrigée des variations saisonnières et des jours ouvrés (CVS-CJO) contenant 181 observations. L'unité de mesure est un indice de base 100 en 1990.
+### Question 1
+
+La série étudiée représente la production mensuelle de biens manufacturés en France métropolitaine entre janvier 1985 et janvier 2000. C'est une série agrégée corrigée des variations saisonnières et des jours ouvrés (CVS-CJO) contenant 181 observations. L'unité de mesure est un indice de base 100 en 1990.
 La série est de la forme suivante :
 
+### Question 2
+
+a) Nous sommes d'abord demandés si la série avait une saisonnalité. En observant attentivement année après année, on pourrait croire que la série est globalement croissante sur une année. Pour en avoir le coeur nette, nous avons regardé la répartition de l'indice pour chaque mois.
+
+```{r, include=TRUE, echo=FALSE}
+lien_graph = "Graphiques"
+gg3 = readRDS(file.path(lien_graph,"boxplot.rds"))
+plot(gg3)
+
+```
+
+Aucune saisonnalité semble se dégager.
+
+b) Toutefois la série possède une tendance nette à la hausse malgré une baisse de l'indice entre 1990 et 1994. 
 
 ```{r, include=TRUE, echo=FALSE}
 lien_graph = "Graphiques"
@@ -29,6 +45,28 @@ gg = readRDS(file.path(lien_graph,"courbe.rds"))
 plot(gg)
 
 ```
+
+Elle est nette quand on réalise une régression linéaire de la série sur le temps (coefficent de 0.087).
+
+Nous avons donc différencié la série puis réaliser des tests de stationnarité sur cette nouvelle série.
+
+Les test ADF et PP rejète l'hypothèse de racine unité et le test KPSS ne rejette pas l'hypothèse de stationnarité de la série. Nous considérons donc la série différenciée statinnaire.
+
+### Question 3
+
+```{r, include=TRUE, echo=FALSE}
+lien_graph = "Graphiques"
+gg = readRDS(file.path(lien_graph,"courbe.rds"))
+gg_diff = readRDS(file.path(lien_graph,"ts_choisie.rds"))
+
+gg
+
+gg_diff
+```
+
+## Partie II : Modèles ARMA
+
+### Question 4
 
 Une autre caractéristique importante de notre série temporelle est son autocorrélation des résidues. On observe en effet qu'ils sont parfaitement linéairement décroissants et en dehors des intervalles de confiance. Cela nous amène penser que la série est une marche aléatoire.
 
@@ -38,12 +76,6 @@ acf1 = readRDS(file.path(lien_graph,"ACF_1.rds"))
 plot(acf1)
 
 ```
-
-
-
-## Partie II : Modèles ARMA
-
-4.
 
 5.
 
