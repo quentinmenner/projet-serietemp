@@ -51,35 +51,43 @@ gg3 = ggplot(decomposition_saison, aes(group = month, x = month, y =Valeur)) +
     axis.title.x = element_blank(),
     axis.title.y = element_blank())
 gg3  
+
+saveRDS(gg3, file.path(lien_graph,"boxplot.rds"))
 # On observe une très légère saisonnalité mais rien de très marqué au point de réaliser 
 # une différenciation saisonnière
 
 # Y-a-t-il une tendance ?
 data_tendance <- data %>% 
   mutate(index = index(data))
-library("car")
 
-# Régression linéaire sur le temps
-scatterplot(Valeur ~ index, data = data_tendance, 
-            smoother = FALSE, grid = FALSE, frame = FALSE)
+# Régression linéaire sur le temps pour observer s'il y a une tendance
+lm(data_tendance$Valeur ~ data_tendance$index)
 
-# Une tendance à la hausse semble se dégager
+# Une hausse moyenne de 8.7% par ans. Il y a donc une tendance nette à la hausse.
+# Il faut donc réaliser une différenciation première
+
+# Différenciation première
 diff_ts = diff(ts_data, 1)
+
+# Test de stationnarité
 
 # ADF test
 test_adf = urca::ur.df(diff_ts)
 summary(test_adf)
+# Résultat : "p-value: < 2.2e-16"
 # On rejette l'hypothése nulle (la série n'est pas stationnaire)
 
 # PP test
 test_pp = tseries::pp.test(diff_ts) # test utilisé dans corrigé
 test_pp
+# Résultat : "p-value = 0.01"
 # On rejette l'hypothése nulle (la série n'est pas stationnaire)
 
 # KPSS
 test_kpss = urca::ur.kpss(diff_ts)
 summary(test_kpss)
-# On ne rejette pas l'hypothése nulle 
+# Résultat : "test-statistic is 0.207" ce qui est bien inférieur aux valeurs critiques usuelles
+# On ne rejette pas l'hypothése nulle (la série est stationnaire)
 
 # La série différenciée est donc stationnaire.
 
@@ -92,7 +100,7 @@ summary(test_kpss)
 graph_niveau = ggplot(data = data, aes(x = Periode, y = Valeur))+
   geom_line()+
   scale_x_date(expand = c(0.01, 0.01)) +
-  ggtitle("Evolution de l'indice de la production mensuelle de biens manufactur?s 
+  ggtitle("Evolution de l'indice de la production mensuelle de biens manufacturés 
           \nen France entre janvier 1985 et janvier 2000")+
   labs(caption = "Indice en base 100 en 1990")+
   ggthemes::theme_stata()+
@@ -128,7 +136,7 @@ graph_diff = ggplot(df_serie_choisi, aes(x = Periode, y = Valeur))+
 saveRDS(graph_diff, file.path(lien_graph, "ts_choisie.rds"))
 
 graph_niveau /
-  graph_niveau
+  graph_diff
 
 # Partie 2 ####
 
