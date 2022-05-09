@@ -137,10 +137,10 @@ checkresiduals(model)
 ### Question 5
 
 Nous supposons que donc la production mensuelle de biens manufacturés suit un **ARIMA(1,1,0)** car la série avait besoin d'être différencié une fois pour être stationnaire.
-Le coeffcients lié à l'AR(1) est estimé à **-0.388**. La formule de la série est donc :
+Le coeffcients lié à l'AR(1) est estimé à **-0.388** et la constante est de **0.134**. La formule de la série est donc :
 
 $$
-X_t = 0.612X_{t-1} + 0.388X_{t-2} + \epsilon_t
+X_t = 0.134 + 0.612X_{t-1} + 0.388X_{t-2} + \epsilon_t
 $$
 avec $\epsilon_t$ un bruit blanc gaussien.
 

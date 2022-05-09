@@ -225,23 +225,29 @@ models_possibles = expand.grid(p = c(0, 1), d = 0, q = c(0, 1))
 # On applique la fonction au 4 modèles possibles
 models_evalues = apply(models_possibles,1, evaluation_model)
 
-
-models_evalues$`ARIMA(0,0,0)`
+saveRDS(models_evalues,"eval_modele.rds")
+#ARIMA(0,0,0)
+models_evalues[1]
 # R�sidus non corr�l�s mais coefficient pas significatif
 
-models_evalues$`ARIMA(1,0,0)`
+#ARIMA(1,0,0)
+models_evalues[2]
 # R�sidus non corr�l�s globalement et coefficients significatif mod�le retenu
 
-
-models_evalues$`ARIMA(0,0,1)`
+#ARIMA(0,0,1)
+models_evalues[3]
 # R�sidus non corr�l�s globalement et coefficients significatifs
 
-models_evalues$`ARIMA(1,0,1)`
+#ARIMA(1,0,1)
+models_evalues[4]
+
 # R�sidus non corr�l�s globalement mais coefficient ma1 pas significatif
 
-nom_modeles_retenus = c('ARIMA(1,0,0)', 'ARIMA(0,0,1)')
+# Modèles retenues selon les critères d'autocorrélation des résidues et 
+# significativité des coeffcicients
+num_modeles_retenus = c(2,3)
 
-modeles_retenus <- models_evalues[nom_modeles_retenus]
+modeles_retenus = models_evalues[num_modeles_retenus]
 
 # Selection par la qualité (AIC, BIC)
 qualite_modeles_retenus <- sapply(modeles_retenus, function(x) x$qualite)
@@ -254,9 +260,11 @@ apply(qualite_modeles_retenus,1,function(x) colnames(qualite_modeles_retenus)[wh
 
 # Finalement on opte pour un ARIMA(1,1,0)
 model <- Arima(diff_ts, order = c(1,1,0))
-model
+saveRDS(model, "model_est.rds")
 
-checkresiduals(model)
+rest = checkresiduals(model)
+rest
+saveRDS(rest, "residues.rds")
 # Les résidues sont bien gaussiens
 
 # Partie 3 : Prédiction####
