@@ -26,7 +26,7 @@ La série est de la forme suivante :
 
 ### Question 2
 
-a) Nous sommes d'abord demandés si la série avait une saisonnalité. Une façon de le voir est de regarder la répartition de l'indice pour chaque mois : 
+a) Nous sommes d'abord demandé si la série avait une saisonnalité. Une façon de le voir est de regarder la répartition de l'indice pour chaque mois : 
 
 ```{r, include=TRUE, echo=FALSE}
 lien_graph = "Graphiques"
@@ -46,7 +46,7 @@ plot(gg)
 
 ```
 
-Elle est nette quand on réalise une régression linéaire de la série sur le temps (coefficent de 0.087).
+Elle est nette quand on réalise une régression linéaire de la série sur le temps (coefficient de 0.087).
 
 Nous avons donc différencié la série puis réalisé des tests de stationnarité sur cette nouvelle série.
 
@@ -68,7 +68,7 @@ gg_diff
 
 ### Question 4
 
-Une caractéristique importante de notre série temporelle (non stationnarisée) est l'autocorrélation des résidus. On observe en effet qu'ils sont linéairement décroissants et en dehors de  l'interval de confiance comme c'est le cas dans un AR pure. Nous avons donc fait l'hypothèse que la série est un AR pure.
+Une caractéristique importante de notre série temporelle (non stationnarisée) est l'autocorrélation des résidus. On observe en effet qu'ils sont linéairement décroissants et en dehors de  l'intervalle de confiance comme c'est le cas dans un AR pure. Nous avons donc fait l'hypothèse que la série est un AR pure.
 
 ```{r, include=TRUE, echo=FALSE}
 
@@ -77,9 +77,9 @@ plot(acf1)
 
 ```
 
-Continuous tout de même la méthode de Box-Jenkins pour voir si notre hypothèse se vérifie.
+Continuons tout de même la méthode de Box-Jenkins pour voir si notre hypothèse se vérifie.
 
-Les graphiques de l'ACF et du PACF de la série stationnaire donnent comme valeur maximale des coeffecients AR et MA : 1.
+Les graphiques de l'ACF et du PACF de la série stationnaire donnent comme valeur maximale des coefficients AR et MA : 1.
 
 ```{r, include=TRUE, echo=FALSE}
 
@@ -176,7 +176,7 @@ $X_{T+1} \in \left[q_{\frac{\alpha}{2}} + 0.612X_{T} + 0.388X_{T-1}, q_{1-\frac{
 
 Et : $X_{T+2} \in \left[q_{\frac{\alpha}{2}} + 0.612X_{T+1} + 0.388X_{T}, q_{1-\frac{\alpha}{2}} + 0.612X_{T+1} + 0.388X_{T}\right]$
 
-Ce qui donne comme interval de confiance pour $X_{t+2}$: $X_{T+2} \in \left[1.612q_{\frac{\alpha}{2}} + 0.762544X_{T} + 0.237456X_{T-1}, 1.612q_{1-\frac{\alpha}{2}} + 0.762544X_{T} + 0.237456X_{T-1}\right]$
+Ce qui donne comme intervalle de confiance pour $X_{t+2}$: $X_{T+2} \in \left[1.612q_{\frac{\alpha}{2}} + 0.762544X_{T} + 0.237456X_{T-1}, 1.612q_{1-\frac{\alpha}{2}} + 0.762544X_{T} + 0.237456X_{T-1}\right]$
 
 ### Question 7 
 
