@@ -48,7 +48,7 @@ plot(gg)
 
 Elle est nette quand on réalise une régression linéaire de la série sur le temps (coefficent de 0.087).
 
-Nous avons donc différencié la série puis réaliser des tests de stationnarité sur cette nouvelle série.
+Nous avons donc différencié la série puis réalisé des tests de stationnarité sur cette nouvelle série.
 
 Les test ADF et PP rejette l'hypothèse de racine unité et le test KPSS ne rejette pas l'hypothèse de stationnarité de la série. Nous considérons donc que la série différenciée stationnaire.
 
@@ -68,7 +68,7 @@ gg_diff
 
 ### Question 4
 
-Une caractéristique importante de notre série temporelle est l'autocorrélation des résidues. On observe en effet qu'ils sont linéairement décroissants et en dehors des intervalles de confiance comme il est le cas dans un AR pure. Nous sommes donc amèné à penser que la série est un AR pure.
+Une caractéristique importante de notre série temporelle (non stationnarisée) est l'autocorrélation des résidus. On observe en effet qu'ils sont linéairement décroissants et en dehors de  l'interval de confiance comme c'est le cas dans un AR pure. Nous avons donc fait l'hypothèse que la série est un AR pure.
 
 ```{r, include=TRUE, echo=FALSE}
 
@@ -77,9 +77,9 @@ plot(acf1)
 
 ```
 
-Continuous tout de même la méthode de Box-Jenkins, pour voir si notre hypothèse est vérifiée.
+Continuous tout de même la méthode de Box-Jenkins pour voir si notre hypothèse se vérifie.
 
-Les graphiques de l'ACF et du PACF donne comme valeur maximale des coeffecients AR et MA 1.
+Les graphiques de l'ACF et du PACF de la série stationnaire donnent comme valeur maximale des coeffecients AR et MA : 1.
 
 ```{r, include=TRUE, echo=FALSE}
 
@@ -90,9 +90,9 @@ acf/
 
 ```
 
-On évalue donc 4 modèles : ARMA(0,0), ARMA(1,0) (ou AR(1)), ARMA(0,1) (ou MA(1)) et ARMA(1,1) en regardant d'abord l'autocorrélation des résidues et la significativité des coefficients.
+On évalue donc 4 modèles : ARMA(0,0), ARMA(1,0) (ou AR(1)), ARMA(0,1) (ou MA(1)) et ARMA(1,1) en regardant d'abord l'autocorrélation des résidus et la significativité des coefficients.
 
-- Pour le modèle ARMA(0,0) (bruit blanc), on estime le coefficent de la constante
+- Pour le modèle ARMA(0,0) (bruit blanc), on estime le coefficent de la constante:
 ```{r, include=TRUE, echo=FALSE}
 library(knitr)
 models_evalues = readRDS("eval_modele.rds")
@@ -100,7 +100,9 @@ models_evalues = readRDS("eval_modele.rds")
 broom::tidy(models_evalues[[1]]$ttest)
 ```
 
-La constante (seul paramètre) n'est pas significative.
+Ce paramètre n'est pas significative.
+
+Puis nous avons étudié l'autocorrélation des résidus par des tests de Ljung-Box :
 
 ```{r, include=TRUE, echo=FALSE}
 library(knitr)
@@ -108,7 +110,7 @@ library(knitr)
 head(models_evalues[[1]]$lbtest, 10)
 ```
 
-En revanche, les résidus ne sont pas du tout autocorrélés. **On ne retient pas ce modèle**.
+Les résidus ne sont pas du tout autocorrélés. Mais**on ne retient pas ce modèle** car le coefficient n'est pas significatif.
 
 - On procède de même pour le modèle AR(1) : 
 ```{r, include=TRUE, echo=FALSE}
