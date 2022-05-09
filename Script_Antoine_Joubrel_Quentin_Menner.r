@@ -1,5 +1,6 @@
 ###### Projet de série temporelle ######
 
+# Encodage : UTF-8
 
 # Packages utilisés ####
 
@@ -74,16 +75,12 @@ diff_ts = diff(ts_data, 1)
 
 # ADF test
 test_adf = urca::ur.df(diff_ts)
-slot(test_adf, 'teststat')
-slot(test_adf, "cval")
+summary(test_adf)
 # Résultat : "p-value: < 2.2e-16"
 # On rejette l'hypothése nulle (la série n'est pas stationnaire)
 
 # PP test
-test_pp = urca::ur.pp(diff_ts, type = "Z-tau") # test utilisé dans corrigé
-slot(test_pp, 'teststat')
-slot(test_pp, "cval")
-test_pp
+test_pp = urca::ur.pp(diff_ts, type = "Z-tau") 
 summary(test_pp)
 # Résultat : "p-value = 0.01"
 # On rejette l'hypothése nulle (la série n'est pas stationnaire)
@@ -91,8 +88,7 @@ summary(test_pp)
 # KPSS
 test_kpss = kpss.test(diff_ts, null = "Level")
 test_kpss
-slot(test_kpss, 'teststat')
-slot(test_kpss, "cval")
+
 # Résultat : "test-statistic is 0.207" ce qui est bien inférieur aux valeurs critiques usuelles
 # On ne rejette pas l'hypothése nulle (la série est stationnaire)
 
@@ -100,9 +96,9 @@ slot(test_kpss, "cval")
 
 # Question 3 ####
 
-#Représentation de la série avant :
+# Représentation de la série avant :
 
-#Graphique de la série en niveau
+# Graphique de la série en niveau
 
 graph_niveau = ggplot(data = data, aes(x = Periode, y = Valeur))+
   geom_line()+
@@ -112,11 +108,13 @@ graph_niveau = ggplot(data = data, aes(x = Periode, y = Valeur))+
   labs(caption = "Indice en base 100 en 1990")+
   ggthemes::theme_stata()+
   theme(
-    plot.title   = element_text(lineheight = 0.8, face = "bold", hjust = 0.5, size = 15),
+    plot.title   = element_text(lineheight = 0.8, face = "bold", hjust = 0.5, size = 10),
     axis.text.x  = element_text(angle = 45, hjust = 1),
     axis.text.y  = element_text(),
     axis.title.x = element_blank(),
     axis.title.y = element_blank())
+
+graph_niveau
 
 # Sauvegarde du graphique
 saveRDS(graph_niveau, file.path(lien_graph,"courbe.rds"))
@@ -126,14 +124,15 @@ saveRDS(graph_niveau, file.path(lien_graph,"courbe.rds"))
 # Construction du graphique
 graph_diff = ggplot(diff_ts, as.numeric = FALSE)+
   geom_line()+
-  ggtitle("Représentation de la série temporelle choisie") +
+  ggtitle("Représentation de la série temporelle choisie (stationnaire)") +
   ggthemes::theme_stata()+
   theme(
-    plot.title   = element_text(lineheight = 0.8, face = "bold", hjust = 0.5, size = 15),
+    plot.title   = element_text(lineheight = 0.8, face = "bold", hjust = 0.5, size = 10),
     axis.text.x  = element_text(angle = 45, hjust = 1),
     axis.text.y  = element_text(),
     axis.title.x = element_blank(),
     axis.title.y = element_blank())
+graph_diff
 
 # Sauvegarde du graphique
 saveRDS(graph_diff, file.path(lien_graph, "ts_choisie.rds"))
@@ -145,10 +144,24 @@ graph_niveau /
 
 # Question 4 : Choix ARMA(p,q) ####
 
+# ACF de la série non stationnarisé 
+acf_non_stationnaire = ggAcf(ts_data)+
+  ggthemes::theme_stata()+
+  labs(title = "ACF de la série non stationnarisée")+
+  theme(
+    plot.title   = element_text(lineheight = 0.8, face = "bold", hjust = 0.5, size = 15),
+    axis.text.x  = element_text(),
+    axis.text.y  = element_text(),
+    axis.title.x = element_blank(),
+    axis.title.y = element_blank())
+acf_non_stationnaire
+
+saveRDS(acf_non_stationnaire, file.path(lien_graph,"ACF_1.rds"))
+
 # Identification des valeurs maximales
 acf = ggAcf(diff_ts)+
   ggthemes::theme_stata()+
-  labs(title = "ACF")+
+  labs(title = "ACF de la série stationnarisée")+
   theme(
     plot.title   = element_text(lineheight = 0.8, face = "bold", hjust = 0.5, size = 15),
     axis.text.x  = element_text(),
@@ -160,13 +173,14 @@ acf = ggAcf(diff_ts)+
 
 pacf = ggPacf(diff_ts)+
   ggthemes::theme_stata()+
-  labs(title = "PACF")+
+  labs(title = "PACF de la série stationnarisée")+
   theme(
     plot.title   = element_text(lineheight = 0.8, face = "bold", hjust = 0.5, size = 15),
     axis.text.x  = element_text(),
     axis.text.y  = element_text(),
     axis.title.x = element_blank(),
     axis.title.y = element_blank())
+# La valeur maximale de q est 1 (pour le AR)
 
 # Sauvegarde 
 saveRDS(acf, file.path(lien_graph,"ACF_ts_choix.rds"))
@@ -174,7 +188,7 @@ saveRDS(pacf, file.path(lien_graph,"PACF_ts_choix.rds"))
 
 acf /
   pacf
-# La valeur maximale de q est 1 (pour le AR)
+
 
 # Estimation des modèles : test de tous les modèles
 
@@ -218,13 +232,14 @@ models_possibles = expand.grid(p = c(0, 1), d = 0, q = c(0, 1))
 models_evalues = apply(models_possibles,1, evaluation_model)
 
 saveRDS(models_evalues,"eval_modele.rds")
+
 #ARIMA(0,0,0)
 models_evalues[1]
 # Résidus non corrélés mais coefficient pas significatif : modèle non retenu
 
 #ARIMA(1,0,0)
 models_evalues[2]
-# Résidus non corr�l�s globalement et coefficients significatif : modèle retenu
+# Résidus non corrélés globalement et coefficients significatif : modèle retenu
 
 #ARIMA(0,0,1)
 models_evalues[3]
@@ -251,21 +266,19 @@ apply(qualite_modeles_retenus,1,function(x) colnames(qualite_modeles_retenus)[wh
 # Question 5
 
 # Finalement on opte pour un ARIMA(1,1,0)
-model <- Arima(diff_ts, order = c(1,1,0))
+model <- Arima(diff_ts, order = c(1,0,0))
+model
 saveRDS(model, "model_est.rds")
 
-rest = checkresiduals(model)
-rest
-saveRDS(rest, "residues.rds")
-# Les résidues sont bien gaussiens
+plot(checkresiduals(model))
+
+# Les résidues sont gaussiens.
 
 # Partie 3 : Prédiction####
 
 # Question 8:
-autoplot(forecast(model, 2))
 
-predict(model, 2)
-#____________________________________________________________
+# Tableau des valeurs de la région de confiance de niveau 95%
 x_serie <- seq(110.4564,114.3764,0.01)
 funct_1 <- function(x) 45.5324 - 0.612*x
 funct_2 <- function(x) 41.6124 - 0.612*x
@@ -274,11 +287,24 @@ colonne_3 <- funct_2(x_serie)
 
 df <- data.frame(x_serie, colonne_2, colonne_3)
 
-# Area chart
-ggplot(data = df,aes(x=x_serie))+
+# Graphique de la région de confiance
+
+gg_RC = ggplot(data = df,aes(x=x_serie))+
+  labs(title = "Région de confiance (X_(t+1), X_(t+2))")+
   geom_ribbon(aes(x=x_serie, ymax=colonne_2, ymin=colonne_3), fill="pink", alpha=.5) +
   geom_line(aes(y = colonne_2, colour = "Max.")) +
   geom_line(aes(y = colonne_3, colour = "Min.")) +
   scale_colour_manual("", 
                       breaks = c("Max.", "Min."),
-                      values = c("Max."="red", "Min."="blue"))
+                      values = c("Max."="red", "Min."="blue"))+
+  ggthemes::theme_stata()+
+  theme(
+    plot.title   = element_text(lineheight = 0.8, face = "bold", hjust = 0.5, size = 15),
+    axis.text.x  = element_text(),
+    axis.text.y  = element_text(),
+    axis.title.x = element_blank(),
+    axis.title.y = element_blank())
+gg_RC
+
+#Sauvegarde
+saveRDS(gg_RC, file.path(lien_graph,"region_confiance.rds"))

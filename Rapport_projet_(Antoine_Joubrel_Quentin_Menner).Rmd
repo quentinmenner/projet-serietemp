@@ -180,7 +180,7 @@ Pour obtenir cette région de confiance, nous utilisons les hypothèses que les 
 
 ### Question 8
 
-On prend ici une région de confiance de niveau 95% ($\alpha = 5\%$). Donc $q_{2.5}=-1.96$ et $q_{97.5}=1.96$. On considère T et T-1 comme étant respectivement la dernière et l'avant-dernière période de notre série temporelle ce qui donne $X_{T}=112.3$ et $X_{T-1}=112.6$. Donc $X_{T+1} \in \left[110.4564,114.3764\right]$ et 
+On prend ici une région de confiance de niveau 95%. Donc $q_{2.5}=-1.96$ et $q_{97.5}=1.96$. On considère T et T-1 comme étant respectivement la dernière et l'avant-dernière période de notre série temporelle ce qui donne $X_{T}=112.3$ et $X_{T-1}=112.6$. Donc $X_{T+1} \in \left[110.4564,114.3764\right]$ et 
 $X_{T+2} \in \left[41.6124 - 0.612X_{T+1},45.5324 - 0.612X_{T+1}\right]$
 
 Cela nous donne la région de confiance suivante pour $X_{T+2}$ en fonction de $X_{T+1}$ :
