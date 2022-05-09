@@ -2,9 +2,9 @@
 title: "Projet séries temporelles linéaires"
 author: Antoine Joubrel et Quentin Menner
 output:
+  word_document: default
   html_document:
     df_print: paged
-  word_document: default
   pdf_document:
     toc: true
     toc_depth: 2
@@ -26,7 +26,7 @@ La série est de la forme suivante :
 
 ### Question 2
 
-a) Nous sommes d'abord demandés si la série avait une saisonnalité.  Une façon de le voir est de regarder la répartition de l'indice pour chaque mois : 
+a) Nous sommes d'abord demandés si la série avait une saisonnalité. Une façon de le voir est de regarder la répartition de l'indice pour chaque mois : 
 
 ```{r, include=TRUE, echo=FALSE}
 lien_graph = "Graphiques"
@@ -35,7 +35,7 @@ plot(gg3)
 
 ```
 
-Nous avons conclue qu'aucune saisonnalité semble se dégager.
+Nous avons conclu qu'aucune saisonnalité semble se dégager.
 
 b) Toutefois la série possède une tendance nette à la hausse malgré une baisse de l'indice entre 1990 et 1994. 
 
@@ -50,7 +50,7 @@ Elle est nette quand on réalise une régression linéaire de la série sur le t
 
 Nous avons donc différencié la série puis réalisé des tests de stationnarité sur cette nouvelle série.
 
-Les test ADF et PP rejette l'hypothèse de racine unité et le test KPSS ne rejette pas l'hypothèse de stationnarité de la série. Nous considérons donc que la série différenciée stationnaire.
+Les test ADF et PP rejette l'hypothèse de racine unité et le test KPSS ne rejette pas l'hypothèse de stationnarité de la série. Nous considérons donc que la série différenciée est stationnaire.
 
 ### Question 3
 
@@ -92,7 +92,7 @@ acf/
 
 On évalue donc 4 modèles : ARMA(0,0), ARMA(1,0) (ou AR(1)), ARMA(0,1) (ou MA(1)) et ARMA(1,1) en regardant d'abord l'autocorrélation des résidus et la significativité des coefficients.
 
-- Pour le modèle ARMA(0,0) (bruit blanc), on estime le coefficent de la constante:
+- Pour le modèle ARMA(0,0) (bruit blanc), on estime le coefficient de la constante:
 ```{r, include=TRUE, echo=FALSE}
 library(knitr)
 models_evalues = readRDS("eval_modele.rds")
@@ -139,7 +139,7 @@ checkresiduals(model)
 ### Question 5
 
 Nous supposons que donc la production mensuelle de biens manufacturés suit un **ARIMA(1,1,0)** car la série avait besoin d'être différencié une fois pour être stationnaire.
-Le coeffcients lié à l'AR(1) est estimé à **-0.388** et la constante est de **0.134**. La formule de la série est donc :
+Le coefficients lié à l'AR(1) est estimé à **-0.388** et la constante est de **0.134**. La formule de la série est donc :
 
 $$
 X_t = 0.134 + 0.612X_{t-1} + 0.388X_{t-2} + \epsilon_t
@@ -151,12 +151,14 @@ avec $\epsilon_t$ un bruit blanc gaussien.
 ### Question 6
 
 Comme nous avons réalisé une différentiation d'un mois à l'autre dans la question 2, nous prenons ici le modèle AR(1) de la forme suivante :
+$$
 \begin{align*}
 \Delta X_{t+1} &= a_{0} \Delta X_{t} + \epsilon_{t} \\
 X_{t+1} &= (a_{0}+1)X_{t} - a_{0}X_{t-1} + \epsilon_{t}
 \end{align*}
+$$
 Avec $(\epsilon_{t})_{t} \sim {\sf Norm}(0,1)$. Avec une probabilité de $\alpha\%$, $q_{\frac{\alpha}{2}} \leq \mid\epsilon_{t}\mid \leq q_{1-\frac{\alpha}{2}}$. Ce qui donne :
-
+$$
 \begin{align*}
 q_{\frac{\alpha}{2}} + (a_{0}+1)X_{T} - a_{0}X_{T-1} \leq &X_{T+1} \leq q_{1-\frac{\alpha}{2}} + (a_{0}+1)X_{T} - a_{0}X_{T-1} \\ \\
 
@@ -167,7 +169,7 @@ q_{\frac{\alpha}{2}} + (a_{0}+1)(q_{\frac{\alpha}{2}} + (a_{0}+1)X_{T} - a_{0}X_
 (a_{0}+2)q_{\frac{\alpha}{2}} + (a_{0}^2+a_{0}+1)X_{T} - a_{0}(a_{0}+1)X_{T-1} \leq &X_{T+2} \leq (a_{0}+2)q_{1-\frac{\alpha}{2}} + (a_{0}^2+a_{0}+1)X_{T} - a_{0}(a_{0}+1)X_{T-1} \\
 
 \end{align*}
-
+$$
 D'après la partie II, $a_{0} = -0,388$. Donc on a comme région de confiance de niveau $\alpha$:
 
 $X_{T+1} \in \left[q_{\frac{\alpha}{2}} + 0.612X_{T} + 0.388X_{T-1}, q_{1-\frac{\alpha}{2}} + 0.612X_{T} + 0.388X_{T-1}\right]$

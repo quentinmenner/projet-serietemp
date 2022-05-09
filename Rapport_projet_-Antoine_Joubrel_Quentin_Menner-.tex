@@ -1,0 +1,370 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+  landscape]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{lmodern}
+\usepackage{ifxetex,ifluatex}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdftitle={Projet séries temporelles linéaires},
+  pdfauthor={Antoine Joubrel et Quentin Menner},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\usepackage[left=1.5cm,right=1.5cm,top=2cm,bottom=2cm]{geometry}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifluatex
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+
+\title{Projet séries temporelles linéaires}
+\author{Antoine Joubrel et Quentin Menner}
+\date{}
+
+\begin{document}
+\maketitle
+
+{
+\setcounter{tocdepth}{2}
+\tableofcontents
+}
+\hypertarget{partie-i-les-donnuxe9es}{%
+\subsection{Partie I : Les données}\label{partie-i-les-donnuxe9es}}
+
+\hypertarget{question-1}{%
+\subsubsection{Question 1}\label{question-1}}
+
+La série étudiée représente la production mensuelle de biens
+manufacturés en France métropolitaine entre janvier 1985 et janvier
+2000. C'est une série agrégée corrigée des variations saisonnières et
+des jours ouvrés (CVS-CJO) contenant 181 observations. L'unité de mesure
+est un indice de base 100 en 1990. La série est de la forme suivante :
+
+\hypertarget{question-2}{%
+\subsubsection{Question 2}\label{question-2}}
+
+\begin{enumerate}
+\def\labelenumi{\alph{enumi})}
+\tightlist
+\item
+  Nous sommes d'abord demandés si la série avait une saisonnalité. Une
+  façon de le voir est de regarder la répartition de l'indice pour
+  chaque mois :
+\end{enumerate}
+
+\includegraphics{Rapport_projet_-Antoine_Joubrel_Quentin_Menner-_files/figure-latex/unnamed-chunk-1-1.pdf}
+
+Nous avons conclu qu'aucune saisonnalité semble se dégager.
+
+\begin{enumerate}
+\def\labelenumi{\alph{enumi})}
+\setcounter{enumi}{1}
+\tightlist
+\item
+  Toutefois la série possède une tendance nette à la hausse malgré une
+  baisse de l'indice entre 1990 et 1994.
+\end{enumerate}
+
+\includegraphics{Rapport_projet_-Antoine_Joubrel_Quentin_Menner-_files/figure-latex/unnamed-chunk-2-1.pdf}
+
+Elle est nette quand on réalise une régression linéaire de la série sur
+le temps (coefficent de 0.087).
+
+Nous avons donc différencié la série puis réalisé des tests de
+stationnarité sur cette nouvelle série.
+
+Les test ADF et PP rejette l'hypothèse de racine unité et le test KPSS
+ne rejette pas l'hypothèse de stationnarité de la série. Nous
+considérons donc que la série différenciée est stationnaire.
+
+\hypertarget{question-3}{%
+\subsubsection{Question 3}\label{question-3}}
+
+\includegraphics{Rapport_projet_-Antoine_Joubrel_Quentin_Menner-_files/figure-latex/unnamed-chunk-3-1.pdf}
+\includegraphics{Rapport_projet_-Antoine_Joubrel_Quentin_Menner-_files/figure-latex/unnamed-chunk-3-2.pdf}
+
+\hypertarget{partie-ii-moduxe8les-arma}{%
+\subsection{Partie II : Modèles ARMA}\label{partie-ii-moduxe8les-arma}}
+
+\hypertarget{question-4}{%
+\subsubsection{Question 4}\label{question-4}}
+
+Une caractéristique importante de notre série temporelle (non
+stationnarisée) est l'autocorrélation des résidus. On observe en effet
+qu'ils sont linéairement décroissants et en dehors de l'interval de
+confiance comme c'est le cas dans un AR pure. Nous avons donc fait
+l'hypothèse que la série est un AR pure.
+
+\begin{verbatim}
+## Registered S3 method overwritten by 'quantmod':
+##   method            from
+##   as.zoo.data.frame zoo
+\end{verbatim}
+
+\includegraphics{Rapport_projet_-Antoine_Joubrel_Quentin_Menner-_files/figure-latex/unnamed-chunk-4-1.pdf}
+
+Continuous tout de même la méthode de Box-Jenkins pour voir si notre
+hypothèse se vérifie.
+
+Les graphiques de l'ACF et du PACF de la série stationnaire donnent
+comme valeur maximale des coeffecients AR et MA : 1.
+
+\includegraphics{Rapport_projet_-Antoine_Joubrel_Quentin_Menner-_files/figure-latex/unnamed-chunk-5-1.pdf}
+
+On évalue donc 4 modèles : ARMA(0,0), ARMA(1,0) (ou AR(1)), ARMA(0,1)
+(ou MA(1)) et ARMA(1,1) en regardant d'abord l'autocorrélation des
+résidus et la significativité des coefficients.
+
+\begin{itemize}
+\tightlist
+\item
+  Pour le modèle ARMA(0,0) (bruit blanc), on estime le coefficient de la
+  constante:
+\end{itemize}
+
+\begin{verbatim}
+## Warning: package 'knitr' was built under R version 4.0.5
+\end{verbatim}
+
+\begin{verbatim}
+## # A tibble: 1 x 5
+##   term      estimate std.error statistic p.value
+##   <chr>        <dbl>     <dbl>     <dbl>   <dbl>
+## 1 intercept    0.137    0.0836      1.64   0.102
+\end{verbatim}
+
+Ce paramètre n'est pas significative.
+
+Puis nous avons étudié l'autocorrélation des résidus par des tests de
+Ljung-Box :
+
+\begin{verbatim}
+##       lag b.statistic b.p.value   
+##  [1,] 1   NA          NA          
+##  [2,] 2   29.05626    7.030669e-08
+##  [3,] 3   30.76253    2.089307e-07
+##  [4,] 4   32.15385    4.856948e-07
+##  [5,] 5   32.31955    1.645929e-06
+##  [6,] 6   38.24597    3.367374e-07
+##  [7,] 7   40.44434    3.725091e-07
+##  [8,] 8   48.98071    2.288786e-08
+##  [9,] 9   55.46514    3.584941e-09
+## [10,] 10  55.90873    8.170861e-09
+\end{verbatim}
+
+Les résidus ne sont pas du tout autocorrélés. Mais\textbf{on ne retient
+pas ce modèle} car le coefficient n'est pas significatif.
+
+\begin{itemize}
+\tightlist
+\item
+  On procède de même pour le modèle AR(1) :
+\end{itemize}
+
+\begin{verbatim}
+## # A tibble: 2 x 5
+##   term      estimate std.error statistic      p.value
+##   <chr>        <dbl>     <dbl>     <dbl>        <dbl>
+## 1 ar1         -0.388    0.0694     -5.59 0.0000000222
+## 2 intercept    0.134    0.0556      2.40 0.0163
+\end{verbatim}
+
+Les coefficients sont significatifs aux seuils usuels.
+
+\begin{verbatim}
+##       lag b.statistic b.p.value  
+##  [1,] 1   NA          NA         
+##  [2,] 2   NA          NA         
+##  [3,] 3   4.091048    0.04311091 
+##  [4,] 4   4.720079    0.09441648 
+##  [5,] 5   5.985802    0.112303   
+##  [6,] 6   13.86031    0.007754497
+##  [7,] 7   14.06167    0.0152224  
+##  [8,] 8   18.53717    0.005021067
+##  [9,] 9   21.7933     0.002757393
+## [10,] 10  21.91809    0.005069882
+## [11,] 11  24.59587    0.0034523  
+## [12,] 12  25.77409    0.004056201
+## [13,] 13  27.38773    0.004014003
+## [14,] 14  27.40036    0.006763869
+## [15,] 15  27.70803    0.009937022
+\end{verbatim}
+
+Globalement, les résidus ne sont pas corrélés entre eux (à part pour
+l'ordre 5). Donc \textbf{le modèle AR(1) est retenu.}
+
+De même \textbf{le modèle MA(1) est retenu} car les résidus sont encore
+moins autocorrélés et les coefficients sont significatifs. Toutefois
+\textbf{le modèles ARMA(1,1) n'est pas retenu} car les coefficients ne
+sont pas tous significatifs.
+
+Pour départager le modèle AR(1) du modèle MA(1) nous avons comparé les
+critères d'informations (AIC et BIC) qui montre que le modèle AR(1) est
+meilleur.
+
+Est-il valide ? Pour cela, nous avons observé la répartition des
+résidus.
+
+\begin{verbatim}
+## Warning: package 'forecast' was built under R version 4.0.5
+\end{verbatim}
+
+\includegraphics{Rapport_projet_-Antoine_Joubrel_Quentin_Menner-_files/figure-latex/unnamed-chunk-10-1.pdf}
+
+\begin{verbatim}
+## 
+##  Ljung-Box test
+## 
+## data:  Residuals from ARIMA(1,0,0) with non-zero mean
+## Q* = 44.817, df = 22, p-value = 0.002799
+## 
+## Model df: 2.   Total lags used: 24
+\end{verbatim}
+
+\hypertarget{question-5}{%
+\subsubsection{Question 5}\label{question-5}}
+
+Nous supposons que donc la production mensuelle de biens manufacturés
+suit un \textbf{ARIMA(1,1,0)} car la série avait besoin d'être
+différencié une fois pour être stationnaire. Le coeffcients lié à
+l'AR(1) est estimé à \textbf{-0.388} et la constante est de
+\textbf{0.134}. La formule de la série est donc :
+
+\[
+X_t = 0.134 + 0.612X_{t-1} + 0.388X_{t-2} + \epsilon_t
+\] avec \(\epsilon_t\) un bruit blanc gaussien.
+
+\hypertarget{partie-iii-pruxe9vision}{%
+\subsection{Partie III : Prévision}\label{partie-iii-pruxe9vision}}
+
+\hypertarget{question-6}{%
+\subsubsection{Question 6}\label{question-6}}
+
+Comme nous avons réalisé une différentiation d'un mois à l'autre dans la
+question 2, nous prenons ici le modèle AR(1) de la forme suivante : \[
+\begin{align*}
+\Delta X_{t+1} &= a_{0} \Delta X_{t} + \epsilon_{t} \\
+X_{t+1} &= (a_{0}+1)X_{t} - a_{0}X_{t-1} + \epsilon_{t}
+\end{align*}
+\] Avec \((\epsilon_{t})_{t} \sim {\sf Norm}(0,1)\). Avec une
+probabilité de \(\alpha\%\),
+\(q_{\frac{\alpha}{2}} \leq \mid\epsilon_{t}\mid \leq q_{1-\frac{\alpha}{2}}\).
+Ce qui donne : \$\$ \begin{align*}
+q_{\frac{\alpha}{2}} + (a_{0}+1)X_{T} - a_{0}X_{T-1} \leq &X_{T+1} \leq q_{1-\frac{\alpha}{2}} + (a_{0}+1)X_{T} - a_{0}X_{T-1} \\ \\
+
+\text{Et : } q_{\frac{\alpha}{2}} + (a_{0}+1)X_{T+1} - a_{0}X_{T} \leq &X_{T+2} \leq q_{1-\frac{\alpha}{2}} + (a_{0}+1)X_{T+1} - a_{0}X_{T} \\
+
+q_{\frac{\alpha}{2}} + (a_{0}+1)(q_{\frac{\alpha}{2}} + (a_{0}+1)X_{T} - a_{0}X_{T-1}) - a_{0}X_{T} \leq &X_{T+2} \leq q_{1-\frac{\alpha}{2}} + (a_{0}+1)(q_{1-\frac{\alpha}{2}} + (a_{0}+1)X_{T} - a_{0}X_{T-1}) - a_{0}X_{T} \\
+
+(a_{0}+2)q_{\frac{\alpha}{2}} + (a_{0}^2+a_{0}+1)X_{T} - a_{0}(a_{0}+1)X_{T-1} \leq &X_{T+2} \leq (a_{0}+2)q_{1-\frac{\alpha}{2}} + (a_{0}^2+a_{0}+1)X_{T} - a_{0}(a_{0}+1)X_{T-1} \\
+
+\end{align*} \$\$ D'après la partie II, \(a_{0} = -0,388\). Donc on a
+comme région de confiance de niveau \(\alpha\):
+
+\(X_{T+1} \in \left[q_{\frac{\alpha}{2}} + 0.612X_{T} + 0.388X_{T-1}, q_{1-\frac{\alpha}{2}} + 0.612X_{T} + 0.388X_{T-1}\right]\)
+
+Et :
+\(X_{T+2} \in \left[q_{\frac{\alpha}{2}} + 0.612X_{T+1} + 0.388X_{T}, q_{1-\frac{\alpha}{2}} + 0.612X_{T+1} + 0.388X_{T}\right]\)
+
+Ce qui donne comme interval de confiance pour \(X_{t+2}\):
+\(X_{T+2} \in \left[1.612q_{\frac{\alpha}{2}} + 0.762544X_{T} + 0.237456X_{T-1}, 1.612q_{1-\frac{\alpha}{2}} + 0.762544X_{T} + 0.237456X_{T-1}\right]\)
+
+\hypertarget{question-7}{%
+\subsubsection{Question 7}\label{question-7}}
+
+Pour obtenir cette région de confiance, nous utilisons les hypothèses
+que les résidus suivent une loi normale centrée réduite, que la série
+temporelle est considérée comme stationnaire une fois la différenciation
+effectuée et qu'elle peut être modélisée par un modèle ARIMA de
+paramètres (1,1,0).
+
+\hypertarget{question-8}{%
+\subsubsection{Question 8}\label{question-8}}
+
+On prend ici une région de confiance de niveau 95\%. Donc
+\(q_{2.5}=-1.96\) et \(q_{97.5}=1.96\). On considère T et T-1 comme
+étant respectivement la dernière et l'avant-dernière période de notre
+série temporelle ce qui donne \(X_{T}=112.3\) et \(X_{T-1}=112.6\). Donc
+\(X_{T+1} \in \left[110.4564,114.3764\right]\) et
+\(X_{T+2} \in \left[41.6124 - 0.612X_{T+1},45.5324 - 0.612X_{T+1}\right]\)
+
+Cela nous donne la région de confiance suivante pour \(X_{T+2}\) en
+fonction de \(X_{T+1}\) :
+\includegraphics{Rapport_projet_-Antoine_Joubrel_Quentin_Menner-_files/figure-latex/unnamed-chunk-11-1.pdf}
+
+\hypertarget{question-9}{%
+\subsubsection{Question 9}\label{question-9}}
+
+On cherche à déterminer une méthode permettant de prédire à \(X_{T+1}\)
+à partir d'une autre série \((Y_{t})_{1 \leq t \leq T+1}\) et plus
+précisément de sa valeur à la T+1ème période \(Y_{T+1}\).
+
+On sait que \((Y_{t})_{1 \leq t \leq T+1}\) est une série stationnaire.
+De même dans notre cas, \((\Delta X_{t})_{t}\) est aussi stationnaire.
+Comme on considère que l'on a \(Y_{T+1}\) avant \(X_{T+1}\), on peut
+donc réaliser la régression suivante : \begin{align*}
+\Delta X_{T+1} &= \beta Y_{T+1} + c + u_{t} \\
+X_{T+1} &= \beta Y_{T+1} + X_{T} + c + u_{t} \\
+\text{Avec : }\beta &= \frac{Cov(X_{t},Y_{t})}{Var(X_{t})} \\
+\text{et }c &= EY_{t}-\beta EX_{t} \\
+\end{align*} Pour pouvoir réaliser cette régression il faut s'assurer
+que la condition suivante est respectée : \begin{align*}
+\beta \neq 0 &\iff Cov(X_{t},Y_{t}) \neq 0 \\
+\end{align*} On doit en plus considérer comme condition que les
+observations sont comme un échantillon donc que l'écart type estimé de
+\(\hat{\beta}_{n}\) notée \(se_{n}\) est juste ce qui ne serait pas le
+cas normalement. Dans ce cas, on peut réaliser un test de
+\(H_{0} : \beta = 0\) contre \(H_{1} : \beta \neq 0\). Pour tester
+\(H_{0}\) au niveau \(\alpha\), nous considérons la t-statistique
+\(t_{n}=\frac{\hat{\beta}_{n}}{se_{n}}\) et la région critique :
+\(W_{\alpha}=\{\mid t_{j} \mid > q_{1-\frac{\alpha}{2}}\},\) où
+\(q_{1-\frac{\alpha}{2}}\) est le quantile d'ordre
+\(1-\frac{\alpha}{2}\) de \(N(0,1)\).
+
+\end{document}
