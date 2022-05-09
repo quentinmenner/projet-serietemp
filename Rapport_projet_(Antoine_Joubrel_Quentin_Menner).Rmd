@@ -26,7 +26,7 @@ La série est de la forme suivante :
 
 ### Question 2
 
-a) Nous sommes d'abord demandés si la série avait une saisonnalité. En observant attentivement année après année, on pourrait croire que la série est globalement croissante sur une année. Pour en avoir le coeur nette, nous avons regardé la répartition de l'indice pour chaque mois.
+a) Nous sommes d'abord demandés si la série avait une saisonnalité.  Une façon de le voir est de regarder la répartition de l'indice pour chaque mois : 
 
 ```{r, include=TRUE, echo=FALSE}
 lien_graph = "Graphiques"
@@ -35,7 +35,7 @@ plot(gg3)
 
 ```
 
-Aucune saisonnalité semble se dégager.
+Nous avons conclue qu'aucune saisonnalité semble se dégager.
 
 b) Toutefois la série possède une tendance nette à la hausse malgré une baisse de l'indice entre 1990 et 1994. 
 
