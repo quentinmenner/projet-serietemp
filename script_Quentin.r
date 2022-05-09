@@ -55,8 +55,7 @@ gg3 = ggplot(decomposition_saison, aes(group = month, x = month, y =Valeur)) +
 gg3  
 
 saveRDS(gg3, file.path(lien_graph,"boxplot.rds"))
-# On observe une très légère saisonnalité mais rien de très marqué au point de réaliser 
-# une différenciation saisonnière
+# Pas de saisonnalité apparente
 
 # Y-a-t-il une tendance ?
 data_tendance <- data %>% 
@@ -65,7 +64,7 @@ data_tendance <- data %>%
 # Régression linéaire sur le temps pour observer s'il y a une tendance
 lm(data_tendance$Valeur ~ data_tendance$index)
 
-# Une hausse moyenne de 8.7% par ans. Il y a donc une tendance nette à la hausse.
+# Resultat Une hausse moyenne de 8.7% par ans. Il y a donc une tendance nette à la hausse.
 # Il faut donc réaliser une différenciation première
 
 # Différenciation première
@@ -97,12 +96,7 @@ slot(test_kpss, "cval")
 # Résultat : "test-statistic is 0.207" ce qui est bien inférieur aux valeurs critiques usuelles
 # On ne rejette pas l'hypothése nulle (la série est stationnaire)
 
-# Rassemblement des données dans un tableau
-
-
-
 # La série différenciée est donc stationnaire.
-
 
 # Question 3 ####
 
@@ -128,8 +122,6 @@ graph_niveau = ggplot(data = data, aes(x = Periode, y = Valeur))+
 saveRDS(graph_niveau, file.path(lien_graph,"courbe.rds"))
 
 # Réprésentation de la série après :
-
-# Passage en object data.frame
 
 # Construction du graphique
 graph_diff = ggplot(diff_ts, as.numeric = FALSE)+
@@ -164,7 +156,7 @@ acf = ggAcf(diff_ts)+
     axis.title.x = element_blank(),
     axis.title.y = element_blank())
 
-# valeur max p est de 1 (pour le MA)
+# La valeur maximale de p est 1 (pour le MA)
 
 pacf = ggPacf(diff_ts)+
   ggthemes::theme_stata()+
@@ -182,7 +174,7 @@ saveRDS(pacf, file.path(lien_graph,"PACF_ts_choix.rds"))
 
 acf /
   pacf
-# valeur maximale de q est 1 (pour le AR) 
+# La valeur maximale de q est 1 (pour le AR)
 
 # Estimation des modèles : test de tous les modèles
 
@@ -228,23 +220,23 @@ models_evalues = apply(models_possibles,1, evaluation_model)
 saveRDS(models_evalues,"eval_modele.rds")
 #ARIMA(0,0,0)
 models_evalues[1]
-# R�sidus non corr�l�s mais coefficient pas significatif
+# Résidus non corrélés mais coefficient pas significatif : modèle non retenu
 
 #ARIMA(1,0,0)
 models_evalues[2]
-# R�sidus non corr�l�s globalement et coefficients significatif mod�le retenu
+# Résidus non corr�l�s globalement et coefficients significatif : modèle retenu
 
 #ARIMA(0,0,1)
 models_evalues[3]
-# R�sidus non corr�l�s globalement et coefficients significatifs
+# Résidus non corrélés globalement et coefficients significatifs : modèle retenu
 
 #ARIMA(1,0,1)
 models_evalues[4]
+# Coefficients pas tous significatif : modèle non retenu
 
-# R�sidus non corr�l�s globalement mais coefficient ma1 pas significatif
+# Les modèles retenues selon les critères d'autocorrélation des résidues et 
+# de significativité des coeffcicients
 
-# Modèles retenues selon les critères d'autocorrélation des résidues et 
-# significativité des coeffcicients
 num_modeles_retenus = c(2,3)
 
 modeles_retenus = models_evalues[num_modeles_retenus]
@@ -269,13 +261,7 @@ saveRDS(rest, "residues.rds")
 
 # Partie 3 : Prédiction####
 
-# Question 6 :..
-lapply(modeles_retenus,function(x) forecast(x$model, h = 4))
-
-# Question 7 : On suppose que les r�sidus suivent une loi normal centr�e-r�duite.
-
 # Question 8:
 autoplot(forecast(model, 2))
 
 predict(model, 2)
-# Ce genre de mod�le est difficile � pr�dire
