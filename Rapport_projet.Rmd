@@ -68,7 +68,7 @@ gg_diff
 
 ### Question 4
 
-Une autre caractéristique importante de notre série temporelle est son autocorrélation des résidues. On observe en effet qu'ils sont parfaitement linéairement décroissants et en dehors des intervalles de confiance. Cela nous amène penser que la série est une marche aléatoire.
+Une caractéristique importante de notre série temporelle est l'autocorrélation des résidues. On observe en effet qu'ils sont linéairement décroissants et en dehors des intervalles de confiance comme il est le cas dans un AR pure. Nous sommes donc amèné à penser que la série est un AR pure.
 
 ```{r, include=TRUE, echo=FALSE}
 
@@ -77,7 +77,72 @@ plot(acf1)
 
 ```
 
-5.
+Continuous tout de même la méthode de Box-Jenkins, pour voir si notre hypothèse est vérifiée.
+
+Les graphiques de l'ACF et du PACF donne comme valeur maximale des coeffecients AR et MA 1.
+
+```{r, include=TRUE, echo=FALSE}
+
+acf = readRDS(file.path(lien_graph,"ACF_ts_choix.rds"))
+pacf = readRDS(file.path(lien_graph,"PACF_ts_choix.rds"))
+acf/
+  pacf
+
+```
+
+On évalue donc 4 modèles : ARMA(0,0), ARMA(1,0) (ou AR(1)), ARMA(0,1) (ou MA(1)) et ARMA(1,1) en regardant d'abord l'autocorrélation des résidues et la significativité des coefficients.
+
+- Pour le modèle ARMA(0,0) (bruit blanc)
+```{r, include=TRUE, echo=FALSE}
+library(knitr)
+models_evalues = readRDS("eval_modele.rds")
+
+broom::tidy(models_evalues[[1]]$ttest)
+```
+
+La constante (seul paramètre) n'est pas significative.
+
+```{r, include=TRUE, echo=FALSE}
+library(knitr)
+
+head(models_evalues[[1]]$lbtest, 10)
+```
+
+En revanche, les résidues ne sont pas du tout autocorélées. **On ne retient pas ce modèle**.
+
+- De même pour le modèle AR(1)
+```{r, include=TRUE, echo=FALSE}
+broom::tidy(models_evalues[[2]]$ttest)
+```
+
+Les coefficients sont significatifs aux seuils usuels.
+
+```{r, include=TRUE, echo=FALSE}
+head(models_evalues[[2]]$lbtest, 15)
+```
+
+Globalement, les résidus ne sont pas corrélés entre eux (à part pour l'ordre 5). Donc **le modèle AR(1) est retenu.**
+
+De même le modèle MA(1) est retenu car les résidus sont encore moins autocorrélés et les coefficients sont significatifs. Toutefois le modèles ARMA(1,1) n'est pas retenu car les coeffcients ne sont pas tous significatfs.
+
+Pour départager le modèle AR(1) et MA(1) nous avons comparé les critères d'informations (AIC et BIC) qui montre que le modèle AR(1) est meilleur.
+
+Est-il valide ? Pour cela, nous avons observé la répartition des résidus.
+```{r, include=TRUE, echo=FALSE}
+library(forecast)
+model = readRDS('model_est.rds')
+checkresiduals(model)
+```
+
+### Question 5
+
+Nous supposons que donc la production mensuelle de biens manufacturés suit un **ARIMA(1,1,0)** car la série avait besoin d'être différencié une fois pour être stationnaire.
+Le coeffcients lié à l'AR(1) est estimé à **-0.388**. La formule de la série est donc :
+
+$$
+X_t = 0.612X_{t-1} + 0.388X_{t-2} + \epsilon_t
+$$
+avec $\epsilon_t$ un bruit blanc gaussien.
 
 ## Partie III : Prévision
 
