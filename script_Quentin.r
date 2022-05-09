@@ -265,3 +265,20 @@ saveRDS(rest, "residues.rds")
 autoplot(forecast(model, 2))
 
 predict(model, 2)
+#____________________________________________________________
+x_serie <- seq(110.4564,114.3764,0.01)
+funct_1 <- function(x) 45.5324 - 0.612*x
+funct_2 <- function(x) 41.6124 - 0.612*x
+colonne_2 <- funct_1(x_serie)
+colonne_3 <- funct_2(x_serie)
+
+df <- data.frame(x_serie, colonne_2, colonne_3)
+
+# Area chart
+ggplot(data = df,aes(x=x_serie))+
+  geom_ribbon(aes(x=x_serie, ymax=colonne_2, ymin=colonne_3), fill="pink", alpha=.5) +
+  geom_line(aes(y = colonne_2, colour = "Max.")) +
+  geom_line(aes(y = colonne_3, colour = "Min.")) +
+  scale_colour_manual("", 
+                      breaks = c("Max.", "Min."),
+                      values = c("Max."="red", "Min."="blue"))

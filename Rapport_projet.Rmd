@@ -146,27 +146,53 @@ avec $\epsilon_t$ un bruit blanc gaussien.
 
 ## Partie III : Prévision
 
-6. Comme nous avons réalisé une différentiation d'un mois à l'autre dans la question 2, nous prenons ici le modèle de la forme ARIMA(1,1,0) :
-\begin{center}
-$Y_{t} = X_{t}-X_{t-1} = a + bY_{t-1} + \epsilon_{t}$
-\end{center}
-Avec $(\epsilon_{t})_{t} \sim {\sf Norm}(0,1)$. Avec une probabilité de $\alpha\%$, $\mid\epsilon_{t}\mid \leq q_{1-\frac{\alpha}{2}}$. Ce qui donne :
+6. Comme nous avons réalisé une différentiation d'un mois à l'autre dans la question 2, nous prenons ici le modèle AR(1) de la forme suivante :
+\begin{align*}
+\Delta X_{t+1} &= a_{0} \Delta X_{t} + \epsilon_{t} \\
+X_{t+1} &= (a_{0}+1)X_{t} - a_{0}X_{t-1} + \epsilon_{t}
+\end{align*}
+Avec $(\epsilon_{t})_{t} \sim {\sf Norm}(0,1)$. Avec une probabilité de $\alpha\%$, $q_{\frac{\alpha}{2}} \leq \mid\epsilon_{t}\mid \leq q_{1-\frac{\alpha}{2}}$. Ce qui donne :
 
 \begin{align*}
-q_{\frac{\alpha}{2}} + a + bY_{T} \leq &Y_{T+1} \leq q_{1-\frac{\alpha}{2}} + a + bY_{T} \\
-q_{\frac{\alpha}{2}} + a + b(X_{T}-X_{T-1}) + X_{T} \leq &X_{T+1} \leq q_{1-\frac{\alpha}{2}} + a + b(X_{T}-X_{T-1}) + X_{T} \\
-q_{\frac{\alpha}{2}} + a + (b+1)X_{T} - bX_{T-1} \leq &X_{T+1} \leq q_{1-\frac{\alpha}{2}} + a + (b+1)X_{T} - bX_{T-1} \\
+q_{\frac{\alpha}{2}} + (a_{0}+1)X_{T} - a_{0}X_{T-1} \leq &X_{T+1} \leq q_{1-\frac{\alpha}{2}} + (a_{0}+1)X_{T} - a_{0}X_{T-1} \\ \\
 
-\text{Et :          } q_{\frac{\alpha}{2}} + a + bY_{T+1} \leq &Y_{T+2} \leq q_{1-\frac{\alpha}{2}} + a + bY_{T+1} \\
-q_{\frac{\alpha}{2}} + a + (b+1)X_{T+1} - bX_{T} + \leq &X_{T+2} \leq q_{1-\frac{\alpha}{2}} + a + (b+1)X_{T+1} - bX_{T} \\
-q_{\frac{\alpha}{2}} + a + (b+1)(q_{\frac{\alpha}{2}} + a + (b+1)X_{T} - bX_{T-1}) - bX_{T} + \leq &X_{T+2} \leq q_{1-\frac{\alpha}{2}} + a + (b+1)(q_{1-\frac{\alpha}{2}} + a + (b+1)X_{T} - bX_{T-1}) - bX_{T} \\
-(b+2)q_{\frac{\alpha}{2}} + (b+2)a + (b^2 + b + 1)X_{T} - b(b+1)X_{T-1} \leq &X_{T+2} \leq (b+2)q_{1-\frac{\alpha}{2}} + (b+2)a + (b^2 + b + 1)X_{T} - b(b+1)X_{T-1} \\
+\text{Et : } q_{\frac{\alpha}{2}} + (a_{0}+1)X_{T+1} - a_{0}X_{T} \leq &X_{T+2} \leq q_{1-\frac{\alpha}{2}} + (a_{0}+1)X_{T+1} - a_{0}X_{T} \\
+
+q_{\frac{\alpha}{2}} + (a_{0}+1)(q_{\frac{\alpha}{2}} + (a_{0}+1)X_{T} - a_{0}X_{T-1}) - a_{0}X_{T} \leq &X_{T+2} \leq q_{1-\frac{\alpha}{2}} + (a_{0}+1)(q_{1-\frac{\alpha}{2}} + (a_{0}+1)X_{T} - a_{0}X_{T-1}) - a_{0}X_{T} \\
+
+(a_{0}+2)q_{\frac{\alpha}{2}} + (a_{0}^2+a_{0}+1)X_{T} - a_{0}(a_{0}+1)X_{T-1} \leq &X_{T+2} \leq (a_{0}+2)q_{1-\frac{\alpha}{2}} + (a_{0}^2+a_{0}+1)X_{T} - a_{0}(a_{0}+1)X_{T-1} \\
+
 \end{align*}
 
-+D'après la partie II, $a = .. et b = ...$. Donc on a comme région de confiance de niveau $\alpha$:
+D'après la partie II, $a_{0} = -0,388$. Donc on a comme région de confiance de niveau $\alpha$:
 
-$X_{T+1} \in \left[q_{\frac{\alpha}{2}} + a + (b+1)X_{T} - bX_{T-1}, q_{1-\frac{\alpha}{2}} + a + (b+1)X_{T} - bX_{T-1}\right]$
+$X_{T+1} \in \left[q_{\frac{\alpha}{2}} + 0.612X_{T} + 0.388X_{T-1}, q_{1-\frac{\alpha}{2}} + 0.612X_{T} + 0.388X_{T-1}\right]$
 
-$X_{T+2} \in \left[..q_{\frac{\alpha}{2}} + .. + ..X_{T} - ..X_{T-1}, ..q_{1-\frac{\alpha}{2}} + .. + ..X_{T} - ..X_{T-1}\right]$
+$X_{T+2} \in \left[1.612q_{\frac{\alpha}{2}} + 0.762544X_{T} + 0.237456X_{T-1}, 1.612q_{1-\frac{\alpha}{2}} + 0.762544X_{T} + 0.237456X_{T-1}\right]$
 
 7. Pour obtenir cette région de confiance, nous utilisons les hypothèses que les résidus suivent une loi normale centrée réduite, que la série temporelle est considérée comme stationnaire une fois la différenciation effectuée et qu'elle peut être modélisée par un modèle ARIMA de paramètres (1,1,0)
+
+8. On prend ici une région de confiance de niveau 95%. Donc $q_{2.5}=-1.96$ et $q_{97.5}=1.96$. On considère T et T-1 comme étant respectivement la dernière et l'avant-dernière période de notre série temporelle ce qui donne $X_{T}=112.3$ et $X_{T-1}=112.6$. Donc $X_{T+1} \in \left[110.4564,114.3764\right]$ et 
+$X_{T+2} \in \left[41.6124 - 0.612X_{T+1},45.5324 - 0.612X_{T+1}\right]$
+
+Cela nous donne la région de confiance suivante pour $X_{T+2}$ en fonction de $X_{T+1}$ :
+
+9. On cherche à déterminer une méthode permettant de prédire à $X_{T+1}$ à partir d'une autre série $(Y_{t})_{1 \leq t \leq T+1}$ et plus précisément de sa valeur à la T+1ème période $Y_{T+1}$.
+
+On sait que $(Y_{t})_{1 \leq t \leq T+1}$ est une série stationnaire. De même dans notre cas, $(\Delta X_{t})_{t}$ est aussi stationnaire. Comme on considère que l'on a $Y_{T+1}$ avant $X_{T+1}$, on peut donc réaliser la régression suivante : 
+\begin{align*}
+\Delta X_{T+1} &= \beta Y_{T+1} + c + u_{t} \\
+X_{T+1} &= \beta Y_{T+1} + X_{T} + c + u_{t} \\
+\text{Avec : }\beta &= \frac{Cov(X_{t},Y_{t})}{Var(X_{t})} \\
+\text{et }c &= EY_{t}-\beta EX_{t} \\
+\end{align*}
+Pour pouvoir réaliser cette régression il faut s'assurer que la condition suivante est respectée :
+\begin{align*}
+\beta &\neq 0 \\
+\text{Soit : }Cov(X_{t},Y_{t}) &\neq 0 \\
+\end{align*}
+On doit en plus considérer comme condition que les observations sont comme un échantillon donc que l'écart type estimé de $\hat{\beta}_{n}$ notée $se_{n}$ est juste ce qui ne serait pas le cas normalement.
+Dans ce cas, on peut réaliser un test de $H_{0} : \beta = 0$ contre $H_{1} : \beta \neq 0$.
+Pour tester $H_{0}$ au niveau $\alpha$, nous considérons la t-statistique $t_{n}=\frac{\hat{\beta}_{n}}{se_{n}}$ et la région critique :
+$W_{\alpha}=\{\mid t_{j} \mid > q_{1-\frac{\alpha}{2}}\},$
+où $q_{1-\frac{\alpha}{2}}$ est le quantile d'ordre $1-\frac{\alpha}{2}$ de $N(0,1)$.
