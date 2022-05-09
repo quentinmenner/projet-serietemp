@@ -2,12 +2,12 @@
 title: "Projet séries temporelles linéaires"
 author: Antoine Joubrel et Quentin Menner
 output:
-  word_document: default
   html_document:
     df_print: paged
   pdf_document:
     toc: true
     toc_depth: 2
+  word_document: default
 geometry: left=1.5cm,right=1.5cm,top=2cm,bottom=2cm
 classoption: landscape
 ---
@@ -22,7 +22,6 @@ library(patchwork)
 ### Question 1
 
 La série étudiée représente la production mensuelle de biens manufacturés en France métropolitaine entre janvier 1985 et janvier 2000. C'est une série agrégée corrigée des variations saisonnières et des jours ouvrés (CVS-CJO) contenant 181 observations. L'unité de mesure est un indice de base 100 en 1990.
-La série est de la forme suivante :
 
 ### Question 2
 

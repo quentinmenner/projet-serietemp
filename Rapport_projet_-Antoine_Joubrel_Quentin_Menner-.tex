@@ -6,8 +6,8 @@
   landscape]{article}
 \usepackage{amsmath,amssymb}
 \usepackage{lmodern}
-\usepackage{ifxetex,ifluatex}
-\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+\usepackage{iftex}
+\ifPDFTeX
   \usepackage[T1]{fontenc}
   \usepackage[utf8]{inputenc}
   \usepackage{textcomp} % provide euro and other symbols
@@ -59,7 +59,7 @@
 \providecommand{\tightlist}{%
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 \setcounter{secnumdepth}{-\maxdimen} % remove section numbering
-\ifluatex
+\ifLuaTeX
   \usepackage{selnolig}  % disable illegal ligatures
 \fi
 
@@ -93,7 +93,7 @@ est un indice de base 100 en 1990. La série est de la forme suivante :
 \def\labelenumi{\alph{enumi})}
 \tightlist
 \item
-  Nous sommes d'abord demandés si la série avait une saisonnalité. Une
+  Nous sommes d'abord demandé si la série avait une saisonnalité. Une
   façon de le voir est de regarder la répartition de l'indice pour
   chaque mois :
 \end{enumerate}
@@ -114,7 +114,7 @@ Nous avons conclu qu'aucune saisonnalité semble se dégager.
 \includegraphics{Rapport_projet_-Antoine_Joubrel_Quentin_Menner-_files/figure-latex/unnamed-chunk-2-1.pdf}
 
 Elle est nette quand on réalise une régression linéaire de la série sur
-le temps (coefficent de 0.087).
+le temps (coefficient de 0.087).
 
 Nous avons donc différencié la série puis réalisé des tests de
 stationnarité sur cette nouvelle série.
@@ -137,7 +137,7 @@ considérons donc que la série différenciée est stationnaire.
 
 Une caractéristique importante de notre série temporelle (non
 stationnarisée) est l'autocorrélation des résidus. On observe en effet
-qu'ils sont linéairement décroissants et en dehors de l'interval de
+qu'ils sont linéairement décroissants et en dehors de l'intervalle de
 confiance comme c'est le cas dans un AR pure. Nous avons donc fait
 l'hypothèse que la série est un AR pure.
 
@@ -149,11 +149,11 @@ l'hypothèse que la série est un AR pure.
 
 \includegraphics{Rapport_projet_-Antoine_Joubrel_Quentin_Menner-_files/figure-latex/unnamed-chunk-4-1.pdf}
 
-Continuous tout de même la méthode de Box-Jenkins pour voir si notre
+Continuons tout de même la méthode de Box-Jenkins pour voir si notre
 hypothèse se vérifie.
 
 Les graphiques de l'ACF et du PACF de la série stationnaire donnent
-comme valeur maximale des coeffecients AR et MA : 1.
+comme valeur maximale des coefficients AR et MA : 1.
 
 \includegraphics{Rapport_projet_-Antoine_Joubrel_Quentin_Menner-_files/figure-latex/unnamed-chunk-5-1.pdf}
 
@@ -167,10 +167,6 @@ résidus et la significativité des coefficients.
   Pour le modèle ARMA(0,0) (bruit blanc), on estime le coefficient de la
   constante:
 \end{itemize}
-
-\begin{verbatim}
-## Warning: package 'knitr' was built under R version 4.0.5
-\end{verbatim}
 
 \begin{verbatim}
 ## # A tibble: 1 x 5
@@ -250,11 +246,6 @@ meilleur.
 
 Est-il valide ? Pour cela, nous avons observé la répartition des
 résidus.
-
-\begin{verbatim}
-## Warning: package 'forecast' was built under R version 4.0.5
-\end{verbatim}
-
 \includegraphics{Rapport_projet_-Antoine_Joubrel_Quentin_Menner-_files/figure-latex/unnamed-chunk-10-1.pdf}
 
 \begin{verbatim}
@@ -272,7 +263,7 @@ résidus.
 
 Nous supposons que donc la production mensuelle de biens manufacturés
 suit un \textbf{ARIMA(1,1,0)} car la série avait besoin d'être
-différencié une fois pour être stationnaire. Le coeffcients lié à
+différencié une fois pour être stationnaire. Le coefficients lié à
 l'AR(1) est estimé à \textbf{-0.388} et la constante est de
 \textbf{0.134}. La formule de la série est donc :
 
@@ -312,7 +303,7 @@ comme région de confiance de niveau \(\alpha\):
 Et :
 \(X_{T+2} \in \left[q_{\frac{\alpha}{2}} + 0.612X_{T+1} + 0.388X_{T}, q_{1-\frac{\alpha}{2}} + 0.612X_{T+1} + 0.388X_{T}\right]\)
 
-Ce qui donne comme interval de confiance pour \(X_{t+2}\):
+Ce qui donne comme intervalle de confiance pour \(X_{t+2}\):
 \(X_{T+2} \in \left[1.612q_{\frac{\alpha}{2}} + 0.762544X_{T} + 0.237456X_{T-1}, 1.612q_{1-\frac{\alpha}{2}} + 0.762544X_{T} + 0.237456X_{T-1}\right]\)
 
 \hypertarget{question-7}{%
